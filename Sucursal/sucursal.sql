@@ -1,6 +1,5 @@
-USE Sucursal;
-
 CREATE DATABASE IF NOT EXISTS Sucursal;
+USE Sucursal;
 
 CREATE TABLE IF NOT EXISTS Categoria (
 	IdCategoria INT NOT NULL AUTO_INCREMENT,
@@ -10,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Categoria (
 
 CREATE TABLE IF NOT EXISTS Marca (
 	IdMarca INT NOT NULL AUTO_INCREMENT,
-    Marca VARCHAR(50) NOT NULL,
+    Nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdMarca)
 );
 
@@ -33,7 +32,6 @@ CREATE TABLE IF NOT EXISTS Producto (
     Precio INT NOT NULL,
     Estado VARCHAR(15) NOT NULL,
     FechaRegistro DATE NOT NULL,
-    TiempoGarantia INT NOT NULL,
     IdTipo INT NOT NULL,
     IdMarca INT NOT NULL,
     IdGenero INT NOT NULL,
@@ -49,20 +47,24 @@ CREATE TABLE IF NOT EXISTS Producto (
 CREATE TABLE IF NOT EXISTS Articulo (
 	IdArticulo INT NOT NULL AUTO_INCREMENT,
     Codigo VARCHAR(15) NOT NULL,
+    FechaIngreso DATE NOT NULL,
     Estado VARCHAR(50) NOT NULL,
-    PRIMARY KEY (IdArticulo)
+    FechaGarantia DATE,
+	TiempoGarantia INT NOT NULL,
+    Precio INT NOT NULL,
+    IdProducto INT NOT NULL,
+    PRIMARY KEY (IdArticulo),
+    FOREIGN KEY (IdProducto)
+		REFERENCES Producto (IdProducto)
 );
 
 CREATE TABLE IF NOT EXISTS Promocion (
 	IdPromocion INT NOT NULL AUTO_INCREMENT,
-    Codigo INT NOT NULL,
+    Codigo VARCHAR(20) NOT NULL,
     FechaInicio DATETIME NOT NULL,
     FechaFinal DATETIME NOT NULL,
     Descuento INT NOT NULL,
-    IdArticulo INT NOT NULL,
-    PRIMARY KEY (IdPromocion),
-    FOREIGN KEY (IdArticulo)
-		REFERENCES Articulo (IdArticulo)
+    PRIMARY KEY (IdPromocion)
 );
 
 CREATE TABLE IF NOT EXISTS Pais (
@@ -184,6 +186,7 @@ CREATE TABLE IF NOT EXISTS Factura (
     FechaCompra DATETIME NOT NULL,
     PuntosGanados INT NULL,
     MetodoPago VARCHAR(50) NOT NULL,
+    Total INT NOT NULL,
     IdEmpleado INT NOT NULL,
     IdCliente INT NOT NULL,
     PRIMARY KEY (IdFactura),
@@ -211,3 +214,11 @@ CREATE TABLE IF NOT EXISTS CategoriaXProducto (
 		REFERENCES Producto (IdProducto)
 );
 
+CREATE TABLE IF NOT EXISTS PromocionXArticulo(
+	IdPromocion INT NOT NULL,
+    IdArticulo INT NOT NULL,
+    FOREIGN KEY (IdPromocion)
+		REFERENCES Promocion (IdPromocion),
+	FOREIGN KEY (IdArticulo)
+		REFERENCES Articulo (IdArticulo)
+);
