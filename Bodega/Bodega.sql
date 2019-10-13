@@ -203,10 +203,13 @@
 -- CREATE TABLE IF NOT EXISTS Promocion 
 -- (
 -- 	IdPromocion SERIAL NOT NULL,
--- 	CodigoPromocion VARCHAR(30) NOT NULL,
+-- 	IdSucursal INT4 NOT NULL,
+-- 	IdPromocionSucursal INT4 NOT NULL,
+-- 	Codigo VARCHAR(30) NOT NULL,
 -- 	FechaInicio TIMESTAMP NOT NULL,
 -- 	FechaFinal TIMESTAMP NOT NULL,
 -- 	Descuento INT2 NOT NULL,
+-- 	FOREIGN KEY (IdSucursal) REFERENCES Sucursal(IdSucursal),
 -- 	PRIMARY KEY(IdPromocion)
 -- );
 
@@ -309,6 +312,7 @@
 -- 	Toltal INT4 NOT NULL,
 -- 	MetodoPago VARCHAR(50),
 -- 	IdSucursal INT4 NOT NULL,
+-- 	IdFacturaSucursal INT4 NOT NULL,
 -- 	FOREIGN KEY(IdEmpleadoSucursal)
 -- 		REFERENCES EmpleadoSucursal(IdEmpleadoSucursal),
 -- 	FOREIGN KEY (IdCliente)
@@ -357,6 +361,7 @@
 -- DROP TABLE IF EXISTS Genero CASCADE;
 -- DROP TABLE IF EXISTS Producto CASCADE;
 -- DROP TABLE IF EXISTS Articulo CASCADE; 
+-- DROP TABLE IF EXISTS ArticuloXFactura CASCADE; 
 -- DROP TABLE IF EXISTS ArticuloEnvio CASCADE;
 -- DROP TABLE IF EXISTS Envio CASCADE;
 -- DROP TABLE IF EXISTS CamionXEnvio CASCADE;
@@ -378,22 +383,5 @@
 -- DROP TABLE IF EXISTS Factura CASCADE;
 -- DROP TABLE IF EXISTS CierreCaja CASCADE;
 -- DROP TABLE IF EXISTS Promocion CASCADE;
--- DROP TABLE IF EXISTS PromocionXArticulo CASCADE;
+-- DROP TABLE IF EXISTS PromocionXProducto CASCADE;
 
-
-
--- -- Agrega los puntos de una factura al cliente.
--- CREATE OR REPLACE FUNCTION PuntosClientes() RETURNS TRIGGER AS $PuntosClientes$
---   DECLARE
---   BEGIN
---    	UPDATE Cliente
--- 	SET PuntosAcumulados = Cliente.PuntosAcumulados + NEW.PuntosGanados
--- 	WHERE
---    	NEW.IdCliente = Cliente.IdCliente;
---    RETURN NEW;
---   END;
--- $PuntosClientes$ LANGUAGE plpgsql;
-
--- CREATE TRIGGER PuntosClientes AFTER INSERT 
---     ON Factura FOR EACH ROW 
---     EXECUTE PROCEDURE PuntosClientes();

@@ -36,6 +36,8 @@
 -- END;
 -- $$ LANGUAGE plpgsql;
 
-
+-- DROP FUNCTION IF EXISTS garantiaArticulo;
+-- DROP FUNCTION IF EXISTS getEmpleadoMes;
+-- DROP FUNCTION IF EXISTS promociones;
 	
 
