@@ -1,5 +1,6 @@
 USE sucursal;
 
+-- Triggers
 DELIMITER //
 CREATE TRIGGER PuntosClientes AFTER INSERT ON Factura
 	FOR EACH ROW
@@ -44,3 +45,26 @@ CREATE TRIGGER totalVendidoEmpleado AFTER INSERT ON Factura
 	END;//
 DELIMITER ;
 
+-- Eventos
+
+DELIMITER //
+	CREATE EVENT seleccionaEmpleadoMes
+	ON SCHEDULE EVERY 1 MONTH
+	STARTS current_date()
+	ON COMPLETION PRESERVE
+	DO
+		BEGIN
+			CALL setEmpleadoMes();
+		END;//
+DELIMITER ;
+
+DELIMITER //
+	CREATE EVENT cierreCaja
+    ON SCHEDULE EVERY 1 DAY
+    STARTS '2015-01-01 22:00:00'
+    ON COMPLETION PRESERVE
+    DO
+		BEGIN
+			CALL CierreCaja();
+		END;//
+DELIMITER ;

@@ -1,5 +1,30 @@
 USE sucursal;
 
+-- Funciones
+DELIMITER //
+CREATE FUNCTION getMejorEmpleado(inicio DATE, final DATE)
+RETURNS INT DETERMINISTIC
+BEGIN
+	DECLARE id INT;
+	SELECT E.IdEmpleado INTO id
+	FROM Empleado E LEFT JOIN Factura F ON E.IdEmpleado = F.IdEmpleado
+	WHERE F.FechaCompra BETWEEN inicio AND final
+		GROUP BY E.IdEmpleado
+		ORDER BY SUM(F.Total) DESC
+	LIMIT 1;
+    RETURN id;
+END;//
+DELIMITER ;
+
+DELIMITER //
+CREATE FUNCTION FIRST_DAY(day DATE)
+RETURNS DATE DETERMINISTIC
+BEGIN
+  RETURN ADDDATE(LAST_DAY(SUBDATE(day, INTERVAL 1 MONTH)), 1);
+END;//
+DELIMITER ;
+
+-- Procedimientos
 DELIMITER //
 CREATE PROCEDURE getGarantia(IN codigo VARCHAR(50), OUT garantia DATE)
 BEGIN
@@ -11,7 +36,7 @@ END;//
 DELIMITER ;
 
 DELIMITER //
-	CREATE PROCEDURE getPromociones(IN fechaHora DATETIME, OUT descuento VARCHAR(50), OUT articulo VARCHAR(50))
+	CREATE PROCEDURE getPromociones(IN fechaHora DATETIME)
     BEGIN
 		SELECT P.descuento, A.Codigo, A.Precio
         FROM Promocion P
@@ -24,72 +49,65 @@ DELIMITER ;
 DELIMITER //
 	CREATE PROCEDURE getEmpleadoMes()
     BEGIN
-		SELECT E.IdEmpleado, E.Nombre, SUM(F.Total)
-			FROM Empleado E LEFT JOIN Factura F ON E.IdEmpleado = F.IdEmpleado
-            GROUP BY E.IdEmpleado, E.Nombre;
+		DECLARE empleado INT;
+		SELECT E.IdEmpleado, SUM(F.Total)
+			FROM Empleado E 
+            INNER JOIN Factura F ON E.IdEmpleado = F.IdEmpleado
+            GROUP BY E.IdEmpleado;
     END; //
 DELIMITER ;
 
-DROP PROCEDURE CierreCaja;
 -- Cierre Caja
 DELIMITER //
 	CREATE PROCEDURE CierreCaja()
     BEGIN
-		SET @sql_stmt := concat("SELECT F.* FROM Factura F INNER JOIN ArticuloXFactura AF ON F.IdFactura = AF.IdFactura",
-			"INTO OUTFILE '/Uploads/Sucursales/CierreCaja", CURDATE(), ".csv' ",
-			"FIELDS ENCLOSED BY '", '"',"'",
-			"TERMINATED BY ", "','",
-			"ESCAPED BY '" ,'"',"'",
+		SET @sql_stmt := concat("SELECT F.*, AF.* FROM Factura F, articuloxfactura AF WHERE DATE(F.FechaCompra) = DATE(NOW()) AND F.IdFactura = AF.IdFactura ",
+			"INTO OUTFILE 'C:/Users/Pc/Documents/Postgres/CierreCaja", CURDATE(), ".csv' ",
+			"FIELDS ENCLOSED BY '", '"',"' ",
+			"TERMINATED BY ", "',' ",
+			"ESCAPED BY '" ,'"',"' ",
 			"LINES TERMINATED BY ", "'\r\n'", ";");
 			PREPARE extrct FROM @sql_stmt;
 			EXECUTE extrct;
-			DEALLOCATE PREPARE extrct;
+			DEALLOCATE PREPARE extrct; 	
 	END; //
 DELIMITER ;
 
-CALL CierreCaja();
+DELIMITER //
+	CREATE PROCEDURE agregarCliente()
+    BEGIN
+		SELECT *
+        FROM Cliente C, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
+        WHERE (C.IdPersona = PE.IdPersona AND 
+		  		PE.IdUbicacion = U.IdUbicacion AND 
+		 		U.IdDistrito = D.IdDistrito AND
+		 		D.IdCanton = CA.IdCanton AND
+		 		CA.IdProvincia = PR.IdProvincia AND
+		 		PR.IdPais = P.IdPais)
+		INTO 
+			OUTFILE "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\Cliente.csv"
+			FIELDS TERMINATED BY ';'
+			OPTIONALLY ENCLOSED BY '\"'
+			LINES TERMINATED BY '\r\n';
+    END; //
+DELIMITER ;
 
-SELECT AF.*,F.* FROM ArticuloXFactura AF INNER JOIN Factura F ON AF.IdFactura = F.IdFactura;
+DELIMITER //
+	CREATE PROCEDURE setEmpleadoMes()
+    BEGIN
+        DECLARE idEmpleado INT;
+		SELECT getMejorEmpleado(FIRST_DAY(NOW()), LAST_DAY(NOW())) INTO idEmpleado;
+        INSERT INTO EmpleadoMes(Mes, IdEmpleado)
+        VALUES (FIRST_DAY(NOW()), idEmpleado);
+    END;//
+DELIMITER ;
 
-DROP TABLE Factura CASCADE;
-DROP TABLE ArticuloXFactura CASCADE;
-
-CREATE TABLE IF NOT EXISTS Factura (
-    IdFactura INT NOT NULL,
-    FechaCompra DATETIME NOT NULL,
-    PuntosGanados INT NULL,
-    MetodoPago VARCHAR(50) NOT NULL,
-    Total INT NOT NULL,
-    IdEmpleado INT NOT NULL,
-    IdCliente INT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS ArticuloXFactura (
-	IdArticulo INT NOT NULL,
-    IdFactura INT NOT NULL
-);
-
-INSERT INTO Factura VALUES
-(1, now(), 12, 'Tarjeta', 125, 5, 8),
-(2, now(), 8, 'Tarjeta', 125, 5, 8),
-(3, now(), 2, 'Efectivo', 125, 5, 8),
-(4, now(), 56, 'Tarjeta', 125, 5, 8),
-(5, now(), 10, 'Tarjeta', 125, 5, 8),
-(6, now(), 78, 'Efectivo', 125, 5, 8);
-
-INSERT INTO ArticuloXFactura VALUES
-(1, 5),
-(1, 8),
-(2, 4),
-(2, 3),
-(2, 5),
-(3, 1),
-(3, 2),
-(4, 10),
-(4, 11),
-(5, 14),
-(5, 13),
-(6, 17),
-(6, 20),
-(6, 41);
-
+DELIMITER //
+	CREATE PROCEDURE getEmpleadoMes(IN mes DATE)
+    BEGIN
+		SELECT P.Nombre, P.Apellido1, P.Apellido2, DATE_FORMAT(EM.Mes, '%M %Y') AS 'Mes'
+        FROM Empleado E, Persona P, EmpleadoMes EM
+        WHERE E.IdEmpleado = P.IdEmpleado AND
+			  E.IdEmpleadoMes = EM.IdEmpleado;
+    END;//
+DELIMITER ;
