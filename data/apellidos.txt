@@ -127,7 +127,7 @@ Meaden
 Game
 Napleton
 Loftie
-O'Bradane
+OBradane
 Scannell
 McCumesky
 Mongeot
@@ -486,7 +486,7 @@ Raybould
 Proudley
 Barneveld
 Putton
-Van't Hoff
+Vant Hoff
 Flacknoe
 Littefair
 Rosencwaig
@@ -496,7 +496,7 @@ Syratt
 Bartel
 Tilzey
 Gleadle
-O'Lennane
+OLennane
 Bushill
 Whitesel
 Theuff
@@ -509,7 +509,7 @@ Layus
 Verdey
 Hilling
 Megany
-O'Brollachain
+OBrollachain
 Claiton
 Peegrem
 Bassill
@@ -559,7 +559,7 @@ Bavidge
 Grant
 Medway
 Birtles
-O'Heagertie
+OHeagertie
 Leafe
 Gillfillan
 Danovich
@@ -663,7 +663,7 @@ Hobbert
 Pinnigar
 Calder
 MacKimmie
-O'Cullen
+OCullen
 Darcy
 Osborn
 Earwaker
@@ -705,7 +705,7 @@ Bordman
 Vida
 Deluca
 Luxen
-O' Flaherty
+OFlaherty
 Yeiles
 Cattle
 Learmouth
@@ -835,7 +835,7 @@ Dunnet
 Bulbeck
 Lawrenson
 Paradise
-Dell'Abbate
+DellAbbate
 Linstead
 Cobleigh
 Saye
@@ -886,13 +886,13 @@ Hartzog
 January 1st
 Harwick
 Daltrey
-O'Glassane
+OGlassane
 Slimming
 Ronchi
 Rattery
 Deakes
 Cossans
-O'Crigane
+OCrigane
 Limprecht
 Bowker
 Cromleholme
@@ -1028,7 +1028,7 @@ Dyott
 Gallego
 Vargas
 Duffin
-O'Deoran
+ODeoran
 Nesby
 Kedwell
 Tummons
@@ -1257,7 +1257,7 @@ Cheater
 Berrigan
 Hebron
 Brannigan
-D'Hooge
+DHooge
 Cromar
 Klaffs
 Sherborn
@@ -1324,7 +1324,7 @@ Perutto
 Scotcher
 Esch
 Redgewell
-O'Dyvoy
+ODyvoy
 Hamshere
 Dudson
 Binden
@@ -1390,7 +1390,7 @@ Flintoff
 Swannie
 Rozet
 Pail
-O' Borne
+OBorne
 Derye-Barrett
 Reynault
 Deverille
@@ -1542,7 +1542,7 @@ Varcoe
 Pelchat
 Domleo
 Deddum
-M'Barron
+MBarron
 Satford
 Rosone
 Berre
@@ -1608,9 +1608,9 @@ Whittet
 Beese
 Prendiville
 Keenlyside
-O'Lennane
+OLennane
 Riddall
-L'Amie
+LAmie
 Lyddiard
 Ivankov
 Peniello
@@ -1673,7 +1673,7 @@ Birt
 Baff
 Glossup
 Craske
-D'Ambrosio
+DAmbrosio
 Locker
 Bloxholm
 Hakonsson
@@ -1705,7 +1705,7 @@ Barribal
 Paolotto
 Grzeszczak
 Yell
-O'Carney
+OCarney
 Carde
 Coldham
 Deveril
@@ -1957,7 +1957,7 @@ Lante
 Monkhouse
 Instock
 Deverille
-O'Crigan
+OCrigan
 Brandli
 Baleine
 Meers
@@ -2061,7 +2061,7 @@ Valler
 Bosomworth
 Wrefford
 Braunds
-O'Dyvoie
+ODyvoie
 Aloigi
 Mendus
 Eassom
@@ -2208,7 +2208,7 @@ Sacks
 Chadbourne
 Matterdace
 Cholmondeley
-O'Hoolahan
+OHoolahan
 Childers
 Gellert
 Ackhurst
@@ -2216,13 +2216,13 @@ Claridge
 Lawty
 Becom
 Moland
-D'Antoni
+DAntoni
 Slingsby
 Postlethwaite
 Naisbitt
 Tant
 Idale
-O'Connell
+OConnell
 Lampel
 Tattershall
 Emons
@@ -2253,7 +2253,7 @@ MacKill
 Mackieson
 Staziker
 Hearson
-O'Hone
+O Hone
 Fearenside
 Southby
 Rentoll
@@ -2309,7 +2309,7 @@ Curds
 Giacomozzo
 Poland
 Beningfield
-D'Onise
+D Onise
 Lavies
 Brandacci
 Bunney
@@ -2420,7 +2420,7 @@ Thexton
 Osmon
 Gallahue
 Syphas
-O'Dempsey
+O Dempsey
 McAlester
 Cleever
 Wicks
@@ -2634,7 +2634,7 @@ Benmore
 Dober
 Fawcitt
 Pursglove
-O'Halleghane
+O Halleghane
 Allam
 Espinola
 Skelington
@@ -2650,7 +2650,7 @@ Lowe
 Kimmel
 Piercy
 Berrow
-O'Dwyer
+O Dwyer
 Browning
 Lund
 Sammars
@@ -2754,7 +2754,7 @@ Beatson
 Ducarne
 Pedroli
 Biner
-O'Fogarty
+O Fogarty
 Roper
 Callar
 Segot
@@ -2776,13 +2776,13 @@ Ervin
 Drew
 Stanbrooke
 Hayes
-O'Shields
+O Shields
 Mulholland
 Kedwell
 Divver
 Sterland
 Bousler
-O'Garmen
+O Garmen
 Veschambes
 Digges
 Chapman
@@ -2856,7 +2856,7 @@ Matteris
 Haggidon
 Driussi
 Maharg
-O'Kenny
+O Kenny
 Olenichev
 Cardozo
 Theodore
@@ -2966,7 +2966,7 @@ Bims
 Bensley
 Tinham
 Thominga
-O' Mulderrig
+O  Mulderrig
 Sturley
 Caton
 Sturgeon
@@ -3053,7 +3053,7 @@ Longthorn
 Cash
 Durber
 Forgie
-D'Elias
+D Elias
 Mitchinson
 Windebank
 Hebborne
@@ -3225,7 +3225,7 @@ Fortye
 Digance
 Dymick
 McGerraghty
-O'Dennehy
+O Dennehy
 Aylott
 Lahy
 Castilljo
@@ -3339,7 +3339,7 @@ Tremelling
 Ludwig
 Showler
 Rudall
-O'Hickee
+O Hickee
 Dahler
 Maharey
 Parrett
@@ -3390,7 +3390,7 @@ Ayris
 Jorat
 Swetland
 Bread
-O'Boyle
+O Boyle
 Keddie
 Gowanson
 Grundle
@@ -3479,7 +3479,7 @@ Thunderchief
 Wittman
 Frise
 Teesdale
-Dell'Abbate
+Dell Abbate
 Braz
 Vautre
 Hurlin
@@ -3748,7 +3748,7 @@ Ropp
 Darlow
 Tomicki
 Dawidman
-O'Mailey
+O Mailey
 Caesman
 Robyns
 Merali
@@ -3828,7 +3828,7 @@ Portch
 Treasaden
 Kenefick
 Le Gassick
-O'Quin
+O Quin
 McConway
 Hovell
 Abela
@@ -3942,7 +3942,7 @@ Craydon
 Stowers
 Serman
 Splevin
-D'Antoni
+D Antoni
 Clitheroe
 Degnen
 Pervoe
@@ -3991,7 +3991,7 @@ McEwan
 Gawith
 Richen
 Dampney
-Van T'Hoog
+Van T Hoog
 Fenn
 Jakubovicz
 Verity
@@ -4077,7 +4077,7 @@ Buckland
 Renwick
 Kepp
 Sainer
-O'Cuddie
+O Cuddie
 Pllu
 Hair
 Croad
@@ -4168,7 +4168,7 @@ Messitt
 Gerram
 Trymme
 Jemison
-O' Loughran
+O  Loughran
 MacGorrie
 Spriggin
 Greenall
@@ -4224,7 +4224,7 @@ Mapplebeck
 Derrick
 Oxx
 Bolingbroke
-O'Hern
+O Hern
 Wybern
 Debrick
 Ferrer
@@ -4469,7 +4469,7 @@ Oak
 Linstead
 Lapwood
 Greenland
-O'Logan
+O Logan
 Byres
 Dakhno
 Blackston
@@ -4479,10 +4479,10 @@ Smithyman
 Naton
 Naptin
 Kira
-O'Fearguise
+O Fearguise
 Gwilliams
 Beyn
-O' Bee
+O  Bee
 Coopper
 Godfery
 Dekeyser
@@ -4575,7 +4575,7 @@ Moyle
 Brotherhead
 Edmundson
 Steinson
-O' Quirk
+O  Quirk
 Faircliff
 Sartain
 Grisard
@@ -4706,7 +4706,7 @@ Musla
 Iacobacci
 Broggetti
 Muat
-O'Scanlon
+O Scanlon
 Beastall
 Simper
 Kohrsen
@@ -4715,7 +4715,7 @@ Philo
 Griffoen
 Dubarry
 Van Der Walt
-O'Lennane
+O Lennane
 Vasyutichev
 Vanin
 Bromwich
@@ -4946,7 +4946,7 @@ Egarr
 Catchpole
 Mannakee
 Kaplan
-O'Doran
+O Doran
 Gordon-Giles
 Cuttler
 Wilshere
