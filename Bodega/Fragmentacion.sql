@@ -89,7 +89,7 @@ $$;
 	Genera un CSV donde se encuentra la informacionde un nuevo empleado para 
 	la sucursal
 */
-CREATE OR REPLACE PROCEDURE agregarEmpleado(IdSucursal INT4)
+CREATE OR REPLACE PROCEDURE agregarEmpleado(IdSucursalIN INT4)
 LANGUAGE plpgsql
 AS $$
 BEGIN 
@@ -109,6 +109,7 @@ BEGIN
 	TO 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Empleados.csv' DELIMITER ',' CSV HEADER; 
 END;
 $$;
+CALL agregarEmpleado(2);
 
 SELECT * 
 		  FROM (SELECT E.* FROM EMPLEADO E
