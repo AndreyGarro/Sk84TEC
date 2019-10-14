@@ -519,20 +519,20 @@ public class PostgreSqlExample {
 		Integer idHorario = 0;
 
 		// Agrega Sucursales
-//		for (int i = 0; i < 8; i++) {
-//			idUbicacion = agregaUbicacion(c);
-//			idHorario = agregaHorarios(c);
-//			List<String> provincia = consultString(c,
-//					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
-//							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
-//							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
-//							+ idUbicacion,
-//					"Nombre");
-//
-//			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
-//					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
-//					c);
-//		}
+		for (int i = 0; i < 8; i++) {	
+			idUbicacion = agregaUbicacion(c);
+			idHorario = agregaHorarios(c);
+			List<String> provincia = consultString(c,
+					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
+							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
+							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
+							+ idUbicacion,
+					"Nombre");
+
+			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
+					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
+					c);
+		}
 
 //		agregaProducto(c, complementoProducto(c, "hombre"));
 
@@ -540,11 +540,13 @@ public class PostgreSqlExample {
 		List<String> cedulas = readList("..\\data\\cedulas.txt");
 		List<String> correos = readList("..\\data\\email.txt");
 		List<String> telefonos = readList("..\\data\\telefonos.txt");
-//		
-//		agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0));
+		
+		agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0));
 		
 		for(int i = 0; i <= 4000; i++) {
 			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
 		}
+		
+		relacionarEmpleadoSucursal(c);
 	}
 }
