@@ -134,6 +134,42 @@ public class PostgreSqlExample {
 		return result;
 	}
 
+	public static List<String> generateCode(String opCode, int cant) {
+		Random rand = new Random();
+		List<String> listaCodigos = new ArrayList<String>();
+
+		// Carga lista para códigos
+		List<String> listaAbecedario = readList("..\\data\\abecedario.txt");
+		List<String> listaNumeros = readList("..\\data\\numeros.txt");
+
+		// Longitudes de listas
+		int lenAbecedario = listaAbecedario.size();
+		int lenNumeros = listaNumeros.size();
+		int lenCodigos = listaCodigos.size();
+
+		String codigo;
+		for (int i = 0; i < cant; i++) {
+			codigo = opCode + "-" + listaAbecedario.get(rand.nextInt(lenAbecedario))
+					+ listaAbecedario.get(rand.nextInt(lenAbecedario))
+					+ listaAbecedario.get(rand.nextInt(lenAbecedario))
+					+ listaAbecedario.get(rand.nextInt(lenAbecedario))
+					+ listaAbecedario.get(rand.nextInt(lenAbecedario))
+					+ listaAbecedario.get(rand.nextInt(lenAbecedario)) + listaNumeros.get(rand.nextInt(lenNumeros))
+					+ listaNumeros.get(rand.nextInt(lenNumeros));
+
+			for (String j : listaCodigos) {
+				if (j == codigo) {
+					codigo = "";
+					i--;
+					continue;
+				}
+			}
+			listaCodigos.add(codigo);
+		}
+
+		return listaCodigos;
+	}
+
 	/**
 	 * Genera detalles de ubicaciones
 	 * 
@@ -159,7 +195,8 @@ public class PostgreSqlExample {
 	/**
 	 * Crea una direcion y la almacena en la base de datos.
 	 * 
-	 * @param c coneccion a la base de datos
+	 * @param c
+	 *            coneccion a la base de datos
 	 * @return id de la ubicación registrada
 	 */
 	public static Integer agregaUbicacion(Connection c) {
@@ -229,8 +266,8 @@ public class PostgreSqlExample {
 
 		List<String> horarios = readList("..\\data\\horarios.txt");
 		List<Integer> cantHorarios = consultInteger(c, "SELECT COUNT(*) AS Cuenta FROM Horario;", "Cuenta");
-		
-		if(horarios.size() != cantHorarios.get(0)) {
+
+		if (horarios.size() != cantHorarios.get(0)) {
 			for (int i = 0; i < horarios.size(); i++) {
 				insertData("Horario", "Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Apertura, Cierre",
 						horarios.get(i), c);
@@ -238,6 +275,155 @@ public class PostgreSqlExample {
 		}
 
 		return consultInteger(c, "SELECT IdHorario FROM Horario ORDER BY RANDOM() LIMIT 1", "IdHorario").get(0);
+	}
+
+	public static List<String> complementoProducto(Connection c, String genero) {
+		Random rand = new Random();
+		// Marcas
+		List<String> marcaHombre = readList("..\\data\\marcas_hombre.txt");
+		List<String> marcaMujer = readList("..\\data\\marcas_mujer.txt");
+
+		// Tipo
+		List<String> tipos_hombre = readList("..\\data\\tipos_hombre.txt");
+		List<String> tipos_mujer = readList("..\\data\\tipos_mujer.txt");
+
+		String tipo = "";
+		String marca = "";
+		String categoria = "";
+
+		// Seleccionar Categoria
+		List<String> listaCat = new ArrayList<String>();
+		if (genero == "hombre") {
+			tipo = tipos_hombre.get(rand.nextInt(tipos_hombre.size() - 1));
+			marca = marcaHombre.get(rand.nextInt(marcaHombre.size() - 1));
+			System.out.println(tipo);
+			switch (tipo) {
+			case "Abrigos":
+				listaCat = readList("..\\data\\categoria_abrigos_H.txt");
+				break;
+			case "Camisetas":
+				listaCat = readList("..\\data\\categoria_camisetas_H.txt");
+				break;
+			case "Jeans":
+				listaCat = readList("..\\data\\categoria_jeans_H.txt");
+				break;
+			case "Pantalones":
+				listaCat = readList("..\\data\\categoria_pantalon_H.txt");
+				break;
+			case "Sudaderas":
+				listaCat = readList("..\\data\\categoria_sudaderas_H.txt");
+				break;
+			default:
+				break;
+			}
+		} else {
+
+			tipo = tipos_mujer.get(rand.nextInt(tipos_mujer.size() - 1));
+			marca = marcaMujer.get(rand.nextInt(marcaMujer.size() - 1));
+			System.out.println(tipo);
+
+			switch (tipo) {
+			case "Abrigos":
+				listaCat = readList("..\\data\\categoria_abrigos_M.txt");
+				break;
+			case "Camisetas":
+				listaCat = readList("..\\data\\categoria_camisetas_M.txt");
+				break;
+			case "Jeans":
+				listaCat = readList("..\\data\\categoria_jeans_M.txt");
+				break;
+			case "Blusas":
+				listaCat = readList("..\\data\\categoria_blusas_M.txt");
+				break;
+			case "Pantalon":
+				listaCat = readList("..\\data\\categoria_pantalon_M.txt");
+				break;
+			case "Sudaderas":
+				listaCat = readList("..\\data\\categoria_sudaderas_M.txt");
+				break;
+			case "Vestidos":
+				listaCat = readList("..\\data\\categoria_vestidos_M.txt");
+				break;
+			default:
+				break;
+			}
+		}
+		List<String> temp = new ArrayList<String>();
+		List<String> listaId = new ArrayList<String>();
+		if (listaCat.size() > 0) {
+			categoria = listaCat.get(rand.nextInt(listaCat.size() - 1));
+			temp = consultString(c, "SELECT C.IdCategoria FROM Categoria C WHERE C.Categoria = '" + categoria + "';",
+					"IdCategoria");
+
+			if (temp.size() == 0) {
+				insertData("Categoria", "Categoria", "('" + categoria + "');", c);
+				temp = consultString(c,
+						"SELECT C.IdCategoria FROM Categoria C WHERE C.Categoria = '" + categoria + "';",
+						"IdCategoria");
+			}
+
+			listaId.add(temp.get(0));
+		}
+
+		temp = consultString(c, "SELECT T.idTipo FROM Tipo T WHERE T.Tipo = '" + tipo + "';", "IdTipo");
+
+		if (temp.size() == 0) {
+			insertData("Tipo", "Tipo", "('" + tipo + "');", c);
+			temp = consultString(c, "SELECT T.IdTipo FROM Tipo T WHERE T.Tipo = '" + tipo + "';", "IdTipo");
+		}
+
+		listaId.add(temp.get(0));
+
+		temp = consultString(c, "SELECT M.idMarca FROM Marca M WHERE M.Nombre = '" + marca + "';", "IdMarca");
+
+		if (temp.size() == 0) {
+			insertData("Marca", "Nombre", "('" + marca + "');", c);
+			temp = consultString(c, "SELECT M.idMarca FROM Marca M WHERE M.Nombre = '" + marca + "';", "IdMarca");
+		}
+
+		listaId.add(temp.get(0));
+
+		temp = consultString(c, "SELECT G.idGenero FROM Genero G WHERE G.Genero = '" + genero + "';", "IdGenero");
+		if (temp.size() == 0) {
+			insertData("Genero", "Genero", "('" + genero + "');", c);
+			temp = consultString(c, "SELECT G.idGenero FROM Genero G WHERE G.Genero = '" + genero + "';", "IdGenero");
+		}
+
+		listaId.add(temp.get(0));
+		return listaId;
+	}
+
+	public static void agregaProducto(Connection c, List<String> listaComplemento) {
+		Random rand = new Random();
+		List<String> nombre = generateCode("Name", 1);
+		List<String> descripcion = generateCode("Desc", 1);
+
+		int precio = rand.nextInt(150000) + 20000;
+
+		List<String> estados = new ArrayList<String>();
+		estados.add("Activo");
+		estados.add("Inactivo");
+
+		String estado = estados.get(rand.nextInt(estados.size() - 1));
+
+		List<String> fechas = readList("..\\data\\fechas.txt");
+		String fecha = fechas.get(rand.nextInt(fechas.size() - 1));
+
+		int tiempoGarantia = rand.nextInt(5) + 1;
+
+		if (listaComplemento.size() == 4) {
+			insertData("Producto",
+					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdCategoria, IdTipo, IdMarca, IdGenero",
+					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '" + fecha + "', "
+							+ tiempoGarantia + ", " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
+							+ listaComplemento.get(2) + ", " + listaComplemento.get(3) + ");", c);
+		}else {
+			insertData("Producto",
+					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdCategoria, IdTipo, IdMarca, IdGenero",
+					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '" + fecha + "', "
+							+ tiempoGarantia + ", " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
+							+ listaComplemento.get(2) + ");", c);
+		}
 	}
 
 	/**
@@ -252,22 +438,23 @@ public class PostgreSqlExample {
 		Integer idUbicacion = 0;
 		Integer idHorario = 0;
 
+		// Agrega Sucursales
 		for (int i = 0; i < 8; i++) {
 			idUbicacion = agregaUbicacion(c);
 			idHorario = agregaHorarios(c);
-			System.out.println("SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
-					+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
-					+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia "
-					+ "WHERE U.IdUbicacion = " + idUbicacion);
 			List<String> provincia = consultString(c,
 					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
-					+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
-					+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia "
-					+ "WHERE U.IdUbicacion = " + idUbicacion, "Nombre");
-			
-			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario",
-					"('Sk8-4 TEC " + provincia.get(0) +"', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");", c);
-		}
+							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
+							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
+							+ idUbicacion,
+					"Nombre");
 
+			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
+					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
+					c);
+		}
+		// Agrega Marca, Tipo y Categoría
+		// complementoProducto(c, "mujer");
+		agregaProducto(c, complementoProducto(c, "mujer"));
 	}
 }
