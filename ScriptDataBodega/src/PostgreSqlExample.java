@@ -393,7 +393,7 @@ public class PostgreSqlExample {
 		return listaId;
 	}
 
-	public static void agregaProducto(Connection c, List<String> listaComplemento) {
+	public static String agregaProducto(Connection c, List<String> listaComplemento) {
 		Random rand = new Random();
 		List<String> nombre = generateCode("Name", 1);
 		List<String> descripcion = generateCode("Desc", 1);
@@ -414,15 +414,95 @@ public class PostgreSqlExample {
 		if (listaComplemento.size() == 4) {
 			insertData("Producto",
 					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdCategoria, IdTipo, IdMarca, IdGenero",
-					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '" + fecha + "', "
-							+ tiempoGarantia + ", " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
-							+ listaComplemento.get(2) + ", " + listaComplemento.get(3) + ");", c);
-		}else {
+					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '"
+							+ fecha + "', " + tiempoGarantia + ", " + listaComplemento.get(0) + ", "
+							+ listaComplemento.get(1) + ", " + listaComplemento.get(2) + ", " + listaComplemento.get(3)
+							+ ");",
+					c);
+		} else {
 			insertData("Producto",
-					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdCategoria, IdTipo, IdMarca, IdGenero",
-					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '" + fecha + "', "
-							+ tiempoGarantia + ", " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
-							+ listaComplemento.get(2) + ");", c);
+					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdTipo, IdMarca, IdGenero",
+					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '"
+							+ fecha + "', " + tiempoGarantia + ", " + listaComplemento.get(0) + ", "
+							+ listaComplemento.get(1) + ", " + listaComplemento.get(2) + ");",
+					c);
+		}
+		return consultString(c, "SELECT idProducto FROM Producto P ORDER BY P.IdProducto DESC LIMIT 1;", "idProducto")
+				.get(0);
+
+	}
+
+	private static String agregaPersona(Connection c, String cedula, String correo, String telefono) {
+		Random rand = new Random();
+		List<String> nombres = readList("..\\data\\nombres.txt");
+		List<String> apellidos = readList("..\\data\\apellidos.txt");
+		String nombre = nombres.get(rand.nextInt(nombres.size() - 1));
+		String apellido1 = apellidos.get(rand.nextInt(apellidos.size() - 1));
+		String apellido2 = apellidos.get(rand.nextInt(apellidos.size() - 1));
+
+		insertData("Persona", "Cedula, Nombre, Apellido1, Apellido2, Email, Telefono, IdUbicacion",
+				"('" + cedula + "', '" + nombre + "', '" + apellido1 + "', '" + apellido2 + "', '" + correo + "', '"
+						+ telefono + "', " + agregaUbicacion(c) + ");",
+				c);
+
+		return consultString(c, "SELECT idPersona FROM Persona P ORDER BY P.idPersona DESC LIMIT 1;", "idPersona")
+				.get(0);
+	}
+
+	private static String agregaPuesto(Connection c) {
+		List<String> puestos = new ArrayList<String>();
+		Random rand = new Random();
+
+		puestos.add("Vendedor");
+		puestos.add("Cajero");
+		puestos.add("Asistente");
+		puestos.add("Chofer");
+		puestos.add("Gerente");
+		puestos.add("Guarda");
+
+		String puesto = puestos.get(rand.nextInt(puestos.size() - 1));
+
+		List<String> puestoConsulta = consultString(c,
+				"SELECT P.idPuesto FROM Puesto P WHERE P.Puesto = '" + puesto + "';", "idPuesto");
+
+		if (puestoConsulta.size() == 0) {
+			insertData("Puesto", "Puesto, SalarioBase", "('" + puesto + "', " + (rand.nextInt(750000) + 400000) + ");",
+					c);
+			puestoConsulta = consultString(c, "SELECT P.idPuesto FROM Puesto P WHERE P.Puesto = '" + puesto + "';",
+					"idPuesto");
+		}
+
+		return puestoConsulta.get(0);
+	}
+
+	private static String agregaEmpleado(Connection c, String idPersona) {
+		Random rand = new Random();
+		List<String> fechas = readList("..\\data\\fechas.txt");
+		int ptos = rand.nextInt(200);
+		List<String> estados = new ArrayList<String>();
+		estados.add("Activo");
+		estados.add("Inactivo");
+		insertData("Empleado", "Estado, FechaIngreso, Salario, IdPersona, IdHorario, IdPuesto",
+				"('" + estados.get(rand.nextInt(estados.size())) + "', '" + fechas.get(rand.nextInt(fechas.size() - 1))
+						+ "', " + (rand.nextInt(750) + 400) + ", " + idPersona + ", " + agregaHorarios(c) + ", "
+						+ agregaPuesto(c) + ");",
+				c);
+
+		return consultString(c, "SELECT idEmpleado FROM Empleado E ORDER BY E.idEmpleado DESC LIMIT 1;", "idEmpleado")
+				.get(0);
+	}
+
+	private static void relacionarEmpleadoSucursal(Connection con) {
+		Random rand = new Random();
+		List<String> listaEmpleados = consultString(con, "SELECT idEmpleado FROM Empleado", "idEmpleado");
+		List<String> listaSucursales = consultString(con, "SELECT idSucursal FROM Sucursal", "idSucursal");
+
+		int lenSucursales = listaSucursales.size() - 1;
+
+		while (!listaEmpleados.isEmpty()) {
+			insertData("EmpleadoSucursal", "idEmpleado, IdSucursal",
+					"(" + listaEmpleados.get(0) + ", " + listaSucursales.get(rand.nextInt(lenSucursales)) + ");", con);
+			listaEmpleados.remove(0);
 		}
 	}
 
@@ -439,7 +519,7 @@ public class PostgreSqlExample {
 		Integer idHorario = 0;
 
 		// Agrega Sucursales
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++) {	
 			idUbicacion = agregaUbicacion(c);
 			idHorario = agregaHorarios(c);
 			List<String> provincia = consultString(c,
@@ -453,8 +533,20 @@ public class PostgreSqlExample {
 					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
 					c);
 		}
-		// Agrega Marca, Tipo y Categoría
-		// complementoProducto(c, "mujer");
-		agregaProducto(c, complementoProducto(c, "mujer"));
+
+//		agregaProducto(c, complementoProducto(c, "hombre"));
+
+		// Agrega persona
+		List<String> cedulas = readList("..\\data\\cedulas.txt");
+		List<String> correos = readList("..\\data\\email.txt");
+		List<String> telefonos = readList("..\\data\\telefonos.txt");
+		
+		agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0));
+		
+		for(int i = 0; i <= 4000; i++) {
+			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
+		}
+		
+		relacionarEmpleadoSucursal(c);
 	}
 }
