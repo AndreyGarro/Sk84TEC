@@ -1,6 +1,10 @@
 USE sucursal;
 
 -- Funciones
+/**
+	Busca entre todos los empleados el mejor empleado del mes
+    comprando el total de las  vendas realizadas
+*/
 DELIMITER //
 CREATE FUNCTION getMejorEmpleado(inicio DATE, final DATE)
 RETURNS INT DETERMINISTIC
@@ -16,6 +20,9 @@ BEGIN
 END;//
 DELIMITER ;
 
+/**
+	Obtiene el primer dia de un mes
+*/
 DELIMITER //
 CREATE FUNCTION FIRST_DAY(day DATE)
 RETURNS DATE DETERMINISTIC
@@ -25,6 +32,9 @@ END;//
 DELIMITER ;
 
 -- Procedimientos
+/**
+	Obtiene la fecha de garantia de un producto indicando su codigo
+*/
 DELIMITER //
 CREATE PROCEDURE getGarantia(IN codigo VARCHAR(50), OUT garantia DATE)
 BEGIN
@@ -35,6 +45,9 @@ BEGIN
 END;//
 DELIMITER ;
 
+/**
+	Obtiene las promociones indicando una fecha y una hora
+*/
 DELIMITER //
 	CREATE PROCEDURE getPromociones(IN fechaHora DATETIME)
     BEGIN
@@ -42,22 +55,15 @@ DELIMITER //
         FROM Promocion P
         INNER JOIN PromocionXArticulo AP ON P.IdPromocion = AP.IdPromocion
         INNER JOIN Articulo A ON A.IdArticulo = AP.IdArticulo
-		WHERE fechaHora BETWEEN P.FechaInicio AND P.FechaFinal LIMIT 2;
+		WHERE fechaHora BETWEEN P.FechaInicio AND P.FechaFinal;
     END;//
 DELIMITER ;
 
-DELIMITER //
-	CREATE PROCEDURE getEmpleadoMes()
-    BEGIN
-		DECLARE empleado INT;
-		SELECT E.IdEmpleado, SUM(F.Total)
-			FROM Empleado E 
-            INNER JOIN Factura F ON E.IdEmpleado = F.IdEmpleado
-            GROUP BY E.IdEmpleado;
-    END; //
-DELIMITER ;
-
 -- Cierre Caja
+/**
+	Obtine todas las facturas y articulos vendidos en un dia 
+    para realizar el cierre de caja al final lo guarda en un CSV
+*/
 DELIMITER //
 	CREATE PROCEDURE CierreCaja()
     BEGIN
@@ -73,6 +79,10 @@ DELIMITER //
 	END; //
 DELIMITER ;
 
+/**
+	Escribe en un CSV los nuevos clientes agregados para es 
+    enviados a la Bodega
+*/
 DELIMITER //
 	CREATE PROCEDURE agregarCliente()
     BEGIN
@@ -92,6 +102,10 @@ DELIMITER //
     END; //
 DELIMITER ;
 
+/**
+	Inserta el empleado del mes en la tabla,
+    se ejecuta cada  final de mes
+*/
 DELIMITER //
 	CREATE PROCEDURE setEmpleadoMes()
     BEGIN
@@ -102,6 +116,9 @@ DELIMITER //
     END;//
 DELIMITER ;
 
+/**
+	Consulta el empleado del mes indicando un mes especifico
+*/
 DELIMITER //
 	CREATE PROCEDURE getEmpleadoMes(IN mes DATE)
     BEGIN
