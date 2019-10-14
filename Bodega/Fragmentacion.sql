@@ -89,14 +89,14 @@ $$;
 	Genera un CSV donde se encuentra la informacionde un nuevo empleado para 
 	la sucursal
 */
-CREATE OR REPLACE PROCEDURE agregarEmpleado(IdSucursal INT4)
+CREATE OR REPLACE PROCEDURE agregarEmpleado(IdSucursalIN INT4)
 LANGUAGE plpgsql
 AS $$
 BEGIN 
     COPY (SELECT * 
 		  FROM (SELECT E.* FROM EMPLEADO E
 			   INNER JOIN EmpleadoSucursal ES ON E.IdEmpleado = ES.IdEmpleado
-			   WHERE ES.IdSucursal = IdSucursal) AS EM,
+			   WHERE ES.IdSucursal = 2) AS EM,
 		  	   Puesto PU, Horario H, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
 		  WHERE	EM.IdPuesto = PU.IdPuesto AND
 		  		EM.IdHorario = H.IdHorario AND
@@ -109,4 +109,5 @@ BEGIN
 	TO 'C:/Users/Pc/Documents/Postgres/Empleados.csv' DELIMITER ',' CSV HEADER; 
 END;
 $$;
+CALL agregarEmpleado(2);
 
