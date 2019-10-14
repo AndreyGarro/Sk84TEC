@@ -2,40 +2,43 @@ CREATE DATABASE IF NOT EXISTS Sucursal;
 USE Sucursal;
 
 CREATE TABLE IF NOT EXISTS Categoria (
-	IdCategoria INT NOT NULL AUTO_INCREMENT,
+	IdCategoria INT NOT NULL,
     Categoria VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdCategoria)
 );
 
 CREATE TABLE IF NOT EXISTS Marca (
-	IdMarca INT NOT NULL AUTO_INCREMENT,
+	IdMarca INT NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdMarca)
 );
 
 CREATE TABLE IF NOT EXISTS Genero (
-    IdGenero INT NOT NULL AUTO_INCREMENT,
+    IdGenero INT NOT NULL,
     Genero VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdGenero)
 );
 
 CREATE TABLE IF NOT EXISTS Tipo(
-	IdTipo INT NOT NULL AUTO_INCREMENT,
+	IdTipo INT NOT NULL,
     Tipo VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdTipo)
 );
 
 CREATE TABLE IF NOT EXISTS Producto (
-    IdProducto INT NOT NULL AUTO_INCREMENT,
+    IdProducto INT NOT NULL,
     Nombre VARCHAR(100) NOT NULL,
     Descripcion VARCHAR(255) NOT NULL,
     Precio INT NOT NULL,
     Estado VARCHAR(15) NOT NULL,
     FechaRegistro DATE NOT NULL,
-    IdTipo INT NOT NULL,
+    IdCategoria INT NOT NULL,
+    IdTipo INT NULL,
     IdMarca INT NOT NULL,
     IdGenero INT NOT NULL,
     PRIMARY KEY (IdProducto),
+	FOREIGN KEY (IdCategoria)
+        REFERENCES Categoria (IdCategoria),
     FOREIGN KEY (IdTipo)
         REFERENCES Tipo (IdTipo),
     FOREIGN KEY (IdMarca)
@@ -45,7 +48,7 @@ CREATE TABLE IF NOT EXISTS Producto (
 );
 
 CREATE TABLE IF NOT EXISTS Articulo (
-	IdArticulo INT NOT NULL AUTO_INCREMENT,
+	IdArticulo INT NOT NULL,
     Codigo VARCHAR(15) NOT NULL,
     FechaIngreso DATE NOT NULL,
     Estado VARCHAR(50) NOT NULL,
@@ -68,13 +71,13 @@ CREATE TABLE IF NOT EXISTS Promocion (
 );
 
 CREATE TABLE IF NOT EXISTS Pais (
-	IdPais INT NOT NULL AUTO_INCREMENT,
+	IdPais INT NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY (IdPais)
 );
 
 CREATE TABLE IF NOT EXISTS Provincia (
-    IdProvincia INT NOT NULL AUTO_INCREMENT,
+    IdProvincia INT NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
     IdPais INT NOT NULL,
     PRIMARY KEY (IdProvincia),
@@ -83,7 +86,7 @@ CREATE TABLE IF NOT EXISTS Provincia (
 );
 
 CREATE TABLE IF NOT EXISTS Canton (
-    IdCanton INT NOT NULL AUTO_INCREMENT,
+    IdCanton INT NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
     IdProvincia INT NOT NULL,
     PRIMARY KEY (IdCanton),
@@ -92,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Canton (
 );
 
 CREATE TABLE IF NOT EXISTS Distrito (
-	IdDistrito INT NOT NULL AUTO_INCREMENT,
+	IdDistrito INT NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
     IdCanton INT NOT NULL,
     PRIMARY KEY (IdDistrito),
@@ -102,7 +105,7 @@ CREATE TABLE IF NOT EXISTS Distrito (
 
 
 CREATE TABLE IF NOT EXISTS Ubicacion (
-	IdUbicacion INT NOT NULL AUTO_INCREMENT,
+	IdUbicacion INT NOT NULL,
     DetalleUbicacion VARCHAR(255) NOT NULL,
     IdDistrito INT NULL,
     PRIMARY KEY (IdUbicacion),
@@ -112,6 +115,7 @@ CREATE TABLE IF NOT EXISTS Ubicacion (
 
 CREATE TABLE IF NOT EXISTS Persona (
 	IdPersona INT NOT NULL AUTO_INCREMENT,
+    IdBodega INT,
 	Cedula VARCHAR(50) NOT NULL UNIQUE,
     Nombre VARCHAR(50) NOT NULL,
     Apellido1 VARCHAR(50) NOT NULL,
@@ -125,7 +129,7 @@ CREATE TABLE IF NOT EXISTS Persona (
 );
 
 CREATE TABLE IF NOT EXISTS Horario (
-	IdHorario INT NOT NULL AUTO_INCREMENT,
+	IdHorario INT NOT NULL,
     Lunes BIT NOT NULL,
     Martes BIT NOT NULL,
     Miercoles BIT NOT NULL,
@@ -140,6 +144,7 @@ CREATE TABLE IF NOT EXISTS Horario (
 
 CREATE TABLE IF NOT EXISTS Cliente (
 	IdCliente INT NOT NULL AUTO_INCREMENT,
+    IdClienteBodega INT,
     PuntosAcumulados INT NOT NULL,
     FechaRegistro DATE NOT NULL,
     IdPersona INT NOT NULL,
@@ -149,14 +154,14 @@ CREATE TABLE IF NOT EXISTS Cliente (
 );
 
 CREATE TABLE IF NOT EXISTS Puesto (
-	IdPuesto INT NOT NULL AUTO_INCREMENT,
+	IdPuesto INT NOT NULL,
 	Puesto VARCHAR(50) NOT NULL,
     SalarioBase INTEGER NOT NULL,
     PRIMARY KEY (IdPuesto)
 );
 
 CREATE TABLE IF NOT EXISTS Empleado (
-    IdEmpleado INT NOT NULL AUTO_INCREMENT,
+    IdEmpleado INT NOT NULL,
     Estado VARCHAR(10) NOT NULL,
     FechaIngreso DATE NOT NULL,
     Salario INT NOT NULL,
@@ -205,20 +210,12 @@ CREATE TABLE IF NOT EXISTS ArticuloXFactura (
 		REFERENCES Factura (IdFactura)
 );
 
-CREATE TABLE IF NOT EXISTS CategoriaXProducto (
-	IdCategoria INT NOT NULL,
-    IdProducto INT NOT NULL,
-    FOREIGN KEY (IdCategoria)
-		REFERENCES Categoria (IdCategoria),
-    FOREIGN KEY (IdProducto)
-		REFERENCES Producto (IdProducto)
-);
 
-CREATE TABLE IF NOT EXISTS PromocionXArticulo(
+CREATE TABLE IF NOT EXISTS PromocionXProducto(
 	IdPromocion INT NOT NULL,
-    IdArticulo INT NOT NULL,
+    IdProducto INT NOT NULL,
     FOREIGN KEY (IdPromocion)
 		REFERENCES Promocion (IdPromocion),
-	FOREIGN KEY (IdArticulo)
-		REFERENCES Articulo (IdArticulo)
+	FOREIGN KEY (IdProducto)
+		REFERENCES Producto (IdProducto)
 );

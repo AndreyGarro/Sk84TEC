@@ -1,6 +1,7 @@
 
-
--- Agrega los puntos de una factura al cliente.
+/**
+	Agrega los puntos de una factura al cliente
+*/
 CREATE OR REPLACE FUNCTION PuntosClientes() RETURNS TRIGGER AS $PuntosClientes$
   DECLARE
   BEGIN
@@ -11,13 +12,14 @@ CREATE OR REPLACE FUNCTION PuntosClientes() RETURNS TRIGGER AS $PuntosClientes$
    RETURN NEW;
   END;
 $PuntosClientes$ LANGUAGE plpgsql;
-
+-- Se activa cada insersiones de las facturas 
 CREATE TRIGGER PuntosClientes AFTER INSERT 
     ON Factura FOR EACH ROW 
     EXECUTE PROCEDURE PuntosClientes();
 
-
--- Cambiar el estado de un producto.
+/**
+	Cambiar el estado de un producto cada vez que se agrega una factura con el articulo 
+*/
 CREATE OR REPLACE FUNCTION estadoProducto() RETURNS TRIGGER AS $EstadoProducto$
   DECLARE
   BEGIN
@@ -33,7 +35,9 @@ CREATE TRIGGER estadoProducto AFTER INSERT
     ON ArticuloXFactura FOR EACH ROW 
     EXECUTE PROCEDURE estadoProducto();
 
--- Agregar el id_sucursal a los articulos cuando se envian.
+/**
+ 	Agregar el id_sucursal a los articulos cuando se envian.
+*/
 CREATE OR REPLACE FUNCTION asignarArticulo() RETURNS TRIGGER AS $AsignarArticulo$
   DECLARE
   BEGIN

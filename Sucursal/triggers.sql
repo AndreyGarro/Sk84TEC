@@ -1,6 +1,9 @@
 USE sucursal;
 
 -- Triggers
+/**
+	Se activa en cada factura para actualizar los puntos de los clientes.
+*/
 DELIMITER //
 CREATE TRIGGER PuntosClientes AFTER INSERT ON Factura
 	FOR EACH ROW
@@ -11,6 +14,9 @@ CREATE TRIGGER PuntosClientes AFTER INSERT ON Factura
 	END;//
 DELIMITER ;
 
+/**
+	Actualiza el estado del producto cuando es vendido
+*/
 DELIMITER //
 CREATE TRIGGER EstadoProducto AFTER INSERT ON ArticuloXFactura
 	FOR EACH ROW
@@ -21,6 +27,9 @@ CREATE TRIGGER EstadoProducto AFTER INSERT ON ArticuloXFactura
     END;//
 DELIMITER ;
 
+/**
+	Inserta la fecha de garantia al articulo cuando es vendido
+*/
 DELIMITER //
 CREATE TRIGGER setGarantia AFTER INSERT ON ArticuloXFactura
 	FOR EACH ROW
@@ -35,18 +44,12 @@ CREATE TRIGGER setGarantia AFTER INSERT ON ArticuloXFactura
     END;//
 DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER totalVendidoEmpleado AFTER INSERT ON Factura
-	FOR EACH ROW
-	BEGIN
-		UPDATE Empleado
-		SET totalVendido = NEW.Total + Empleado.totalVendido
-		WHERE (NEW.IdEmpleado = Empleado.IdEmpleado); 
-	END;//
-DELIMITER ;
 
 -- Eventos
-
+/**
+	Evento que se activa una vez al para  insertar
+    el empleado del mes.
+*/
 DELIMITER //
 	CREATE EVENT seleccionaEmpleadoMes
 	ON SCHEDULE EVERY 1 MONTH
@@ -58,6 +61,10 @@ DELIMITER //
 		END;//
 DELIMITER ;
 
+/**
+	Evento cierre de caja se activa todas las noches a las 
+    10:00 pm.
+*/
 DELIMITER //
 	CREATE EVENT cierreCaja
     ON SCHEDULE EVERY 1 DAY
