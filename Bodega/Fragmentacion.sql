@@ -6,118 +6,117 @@
 	nuevos articulos a la sucursal
 */
 CREATE OR REPLACE FUNCTION agregarArticulo(IdEnvioIn INT4)
-RETURNS void AS $$
-DECLARE
-	var INT4 := IdEnvioIn;
+RETURNS TABLE (IdArticulo INT4, FechaIngreso, Codigo, TiempoGarantia, Estado, Precio, IdSucursal, IdProducto,
+			  IdProducto INT4, Nombre VARCHAR(100), Descripcion VARCHAR(255), Precio (INT4), Estado VARCHAR(30), FechaRegistro TIMESTAMP, TiempoGarantia INT4, IdCategria INT4, IdTipo INT4, IdMarca INT4, IdGenero INT4,
+			  IdTipo1 INT4, Tipo VARCHAR(50), IdMarca1 INT4, Nombre VARCHAR(50), IdGenero1 INT4, Genero VARCHAR(30), IdCategoria1 INT4, Categoria VARCHAR(50)) AS 
+$$
 BEGIN 
-    COPY (SELECT * 
+	RETURN QUERY
+		SELECT ASU.IdArticulo, ASU.FechaIngreso, ASU.Codigo, ASU.TiempoGarantia, ASU.Estado, ASU.Precio, ASU.IdSucursal, ASU.IdProducto,
+			  P.IdProducto, P.Nombre, P.Descripcion, P.Precio, P.Estado, P.FechaRegistro, P.TiempoGarantia, P.IdCategria, P.IdTipo, P.IdMarca, P.IdGenero,
+			  T.IdTipo, T.Tipo, M.IdMarca, M.Nombre, G.IdGenero, G.Genero, C.IdCategoria, C.Categoria
 		  FROM 
 		  (SELECT A.IdArticulo, A.Codigo, A.TiempoGarantia, A.IdProducto
 		   FROM Articulo A 
 		   INNER JOIN ArticuloEnvio AE ON A.IdArticulo = AE.IdArticulo 
-		   WHERE AE.IdEnvio = var) AS ASU, Producto P, Tipo T, Marca M, Genero G, (SELECT C.IdCategoria, C.Categoria FROM Categoria C
+		   WHERE AE.IdEnvio = IdEnvio) AS ASU, Producto P, Tipo T, Marca M, Genero G, (SELECT C.IdCategoria, C.Categoria FROM Categoria C
 																					   INNER JOIN CategoriaXProducto CP 
 																					   ON C.IdCategoria = CP.IdCategoria) AS CA	   
 		   WHERE ASU.IdProducto = P.IdProducto AND
 		  		 P.IdTipo = T.IdTipo AND
 		  		 P.IdMarca = M.IdMarca AND
-		  		 P.IDGenero = G.IdGenero) 
-	TO 'C:/Users/Pc/Documents/Postgres/ArticuloEnvio.csv' DELIMITER ',' CSV HEADER; 
+		  		 P.IDGenero = G.IdGenero; 
 END;
 $$ LANGUAGE plpgsql;
 
 SELECT * FROM agregarArticulo(4);
 
-
-/**
-	Function que crea una tabla con los articulos a enviar
-*/
-CREATE OR REPLACE FUNCTION get_all_foo() RETURNS SETOF foo AS
-$BODY$
-DECLARE
-    r foo%rowtype;
-BEGIN
-    FOR r IN
-        SELECT * 
-		  FROM 
-		  (SELECT A.IdArticulo, A.Codigo, A.TiempoGarantia, A.IdProducto
-		   FROM Articulo A 
-		   INNER JOIN ArticuloEnvio AE ON A.IdArticulo = AE.IdArticulo 
-		   WHERE AE.IdEnvio = var) AS ASU, Producto P, Tipo T, Marca M, Genero G, (SELECT C.IdCategoria, C.Categoria FROM Categoria C
-																					   INNER JOIN CategoriaXProducto CP 
-																					   ON C.IdCategoria = CP.IdCategoria) AS CA	   
-		   WHERE ASU.IdProducto = P.IdProducto AND
-		  		 P.IdTipo = T.IdTipo AND
-		  		 P.IdMarca = M.IdMarca AND
-		  		 P.IDGenero = G.IdGenero > 0
-    LOOP
-        RETURN NEXT r;
-    END LOOP;
-    RETURN;
-END
-$BODY$
-LANGUAGE plpgsql;
-
-SELECT * FROM get_all_foo();
-
-
+SELECT * FROM Producto;
 
 -- Agregar Clientes a las sucursales 
 /**
 	Genera un CSV donde se encuentra la informacion para agregar 
 	los Clientes en la sucursal
 */
-CREATE OR REPLACE PROCEDURE agregarCliente()
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE FUNCTION agregarCliente() 
+RETURNS TABLE (IdCliente INT4, PuntosAcumulados INT4, FechaRegistro DATE, IdPersona INT4,
+				IdPersona1 INT4, Cedula VARCHAR(50), Nombre VARCHAR(50), Apellido1 VARCHAR(50), Apellido2 VARCHAR(50), Email VARCHAR(50), Telefono VARCHAR(50), IdUbicacion INT4,
+				IdUbicacion1 INT4, NombrePueblo VARCHAR(50), DetalleUbicacion VARCHAR(255), IdDistrito INT4,
+				IdDistrito1 INT4, Nombre1 VARCHAR(50), IdCanton INT4,
+				IdCanton1 INT4, Nombre2 VARCHAR(50), IdProvincia INT4, 
+				IdProvincia1 INT4, Nombre3 VARCHAR(50), IdPais INT4,
+				IdPais1 INT4, Nombre4 VARCHAR(50)) AS 
+$$
 BEGIN 
-    COPY (SELECT * FROM Cliente C, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
-		  WHERE C.IdPersona = PE.IdPersona AND 
-		  		PE.IdUbicacion = U.IdUbicacion AND 
-		 		U.IdDistrito = D.IdDistrito AND
-		 		D.IdCanton = CA.IdCanton AND
-		 		CA.IdProvincia = PR.IdProvincia AND
-		 		PR.IdPais = P.IdPais)
-	TO 'C:/Users/Pc/Documents/Postgres/Clientes.csv' DELIMITER ',' CSV HEADER; 
+	RETURN QUERY
+		SELECT C.IdCliente, C.PuntosAcumulados, C.FechaRegistro, C.IdPersona,
+				PE.IdPersona, PE.Cedula, PE.Nombre, PE.Apellido1, PE.Apellido2, PE.Email, PE.Telefono, PE.IdUbicacion,
+				U.IdUbicacion, U.NombrePueblo, U.DetalleUbicacion, U.IdDistrito,
+				D.IdDistrito, D.Nombre, D.IdCanton,
+				CA.IdCanton, CA.Nombre, CA.IdProvincia, 
+				PR.IdProvincia, PR.Nombre, PR.IdPais,
+				P.IdPais, P.Nombre
+		FROM Cliente C, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
+			  WHERE C.IdPersona = PE.IdPersona AND 
+					PE.IdUbicacion = U.IdUbicacion AND 
+					U.IdDistrito = D.IdDistrito AND
+					D.IdCanton = CA.IdCanton AND
+					CA.IdProvincia = PR.IdProvincia AND
+					PR.IdPais = P.IdPais;
 END;
-$$;
+$$ 
+LANGUAGE plpgsql;
 
--- CALL agregarCliente();
+SELECT * FROM agregarCliente();
+DROP FUNCTION agregarCliente;
 
 -- Agregar Empleado a la sucursal 
 /**
-	Genera un CSV donde se encuentra la informacionde un nuevo empleado para 
-	la sucursal
+	Genera un table donde se encuentra la informacion de los nuevos empleados para 
+	la sucursal en un dia.
 */
-CREATE OR REPLACE PROCEDURE agregarEmpleado(IdSucursalIN INT4)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE FUNCTION agregarEmpleado(IdSucursalIN INT4)
+RETURNS TABLE (IdEmpleado INT4, Estado VARCHAR(20), FechaIngreso DATE, Salario INT2, IdPersona INT4, IdHorario INT4,  IdPuesto INT4,
+				IdPuesto1 INT4, Puesto VARCHAR(100), SalarioBase INT4,
+				IdHorario1 INT4, Lunes BOOL, Martes BOOL, Miercoles BOOL, Jueves BOOL, Viernes BOOL, Sabado BOOL, Domingo BOOL, Apertura TIME, Cierre TIME,
+				IdPersona1 INT4, Cedula VARCHAR(50), Nombre VARCHAR(50), Apellido1 VARCHAR(50), Apellido2 VARCHAR(50), Email VARCHAR(50), Telefono VARCHAR(50), IdUbicacion INT4,
+				IdUbicacion1 INT4, NombrePueblo VARCHAR(50), DetalleUbicacion VARCHAR(255), IdDistrito INT4,
+				IdDistrito1 INT4, Nombre1 VARCHAR(50), IdCanton INT4,
+				IdCanton1 INT4, Nombre2 VARCHAR(50), IdProvincia INT4, 
+				IdProvincia1 INT4, Nombre3 VARCHAR(50), IdPais INT4,
+				IdPais1 INT4, Nombre4 VARCHAR(50)) AS 
+$$
 BEGIN 
-    COPY (SELECT * 
-		  FROM (SELECT E.* FROM EMPLEADO E
-			   INNER JOIN EmpleadoSucursal ES ON E.IdEmpleado = ES.IdEmpleado
-			   WHERE ES.IdSucursal = 2) AS EM,
-		  	   Puesto PU, Horario H, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
-		  WHERE	EM.IdPuesto = PU.IdPuesto AND
-		  		EM.IdHorario = H.IdHorario AND
-		  		EM.IdPersona = PE.IdPersona AND 
-		  		PE.IdUbicacion = U.IdUbicacion AND 
-		 		U.IdDistrito = D.IdDistrito AND
-		 		D.IdCanton = CA.IdCanton AND
-		 		CA.IdProvincia = PR.IdProvincia AND
-		 		PR.IdPais = P.IdPais)
-	TO 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Empleados.csv' DELIMITER ',' CSV HEADER; 
+	RETURN QUERY
+		SELECT 	EM.IdEmpleado, EM.Estado, EM.FechaIngreso, EM.Salario, EM.IdPersona, EM.IdHorario, EM.IdPuesto,
+				PU.IdPuesto, PU.Puesto, PU.SalarioBase,
+				H.IdHorario, H.Lunes, H.Martes, H.Miercoles, H.Jueves, H.Viernes, H.Sabado, H.Domingo, H.Apertura, H.Cierre,
+				PE.IdPersona, PE.Cedula, PE.Nombre, PE.Apellido1, PE.Apellido2, PE.Email, PE.Telefono, PE.IdUbicacion,
+				U.IdUbicacion, U.NombrePueblo, U.DetalleUbicacion, U.IdDistrito,
+				D.IdDistrito, D.Nombre, D.IdCanton,
+				CA.IdCanton, CA.Nombre, CA.IdProvincia, 
+				PR.IdProvincia, PR.Nombre, PR.IdPais,
+				P.IdPais, P.Nombre 
+			  FROM (SELECT E.* FROM EMPLEADO E
+				   INNER JOIN EmpleadoSucursal ES ON E.IdEmpleado = ES.IdEmpleado
+				   WHERE ES.IdSucursal = IdSucursalIN) AS EM,
+				   Puesto PU, Horario H, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
+			  WHERE	EM.IdPuesto = PU.IdPuesto AND
+					EM.IdHorario = H.IdHorario AND
+					EM.IdPersona = PE.IdPersona AND 
+					PE.IdUbicacion = U.IdUbicacion AND 
+					U.IdDistrito = D.IdDistrito AND
+					D.IdCanton = CA.IdCanton AND
+					CA.IdProvincia = PR.IdProvincia AND
+					PR.IdPais = P.IdPais AND
+					DATE_PART('year', EM.FechaIngreso) = '2019'; 
 END;
-$$;
-CALL agregarEmpleado(2);
+$$ 
+LANGUAGE plpgsql;
 
-SELECT * 
-		  FROM (SELECT E.* FROM EMPLEADO E
-			   INNER JOIN EmpleadoSucursal ES ON E.IdEmpleado = ES.IdEmpleado
-			   WHERE ES.IdSucursal = 160) AS EM,
-		  	   Puesto PU, Horario H, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P;
+SELECT * FROM agregarEmpleado(2);
 
-CALL agregarEmpleado(2);
+DROP FUNCTION agregarEmpleado;
 
-Select * from EmpleadoSucursal;
 
+SELECT Count(*) FROM Empleado;
