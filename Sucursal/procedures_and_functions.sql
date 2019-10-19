@@ -33,6 +33,20 @@ DELIMITER ;
 
 -- Procedimientos
 /**
+	Inserta el empleado del mes en la tabla,
+    se ejecuta cada  final de mes
+*/
+DELIMITER //
+	CREATE PROCEDURE setEmpleadoMes()
+    BEGIN
+        DECLARE idEmpleado INT;
+		SELECT getMejorEmpleado(FIRST_DAY(NOW()), LAST_DAY(NOW())) INTO idEmpleado;
+        INSERT INTO EmpleadoMes(Mes, IdEmpleado)
+        VALUES (FIRST_DAY(NOW()), idEmpleado);
+    END;//
+DELIMITER ;
+
+/**
 	Obtiene la fecha de garantia de un producto indicando su codigo
 */
 DELIMITER //
@@ -59,63 +73,6 @@ DELIMITER //
     END;//
 DELIMITER ;
 
--- Cierre Caja
-/**
-	Obtine todas las facturas y articulos vendidos en un dia 
-    para realizar el cierre de caja al final lo guarda en un CSV
-*/
-DELIMITER //
-	CREATE PROCEDURE CierreCaja()
-    BEGIN
-		SET @sql_stmt := concat("SELECT F.*, AF.* FROM Factura F, articuloxfactura AF WHERE DATE(F.FechaCompra) = DATE(NOW()) AND F.IdFactura = AF.IdFactura ",
-			"INTO OUTFILE 'C:/Users/Pc/Documents/Postgres/CierreCaja", CURDATE(), ".csv' ",
-			"FIELDS ENCLOSED BY '", '"',"' ",
-			"TERMINATED BY ", "',' ",
-			"ESCAPED BY '" ,'"',"' ",
-			"LINES TERMINATED BY ", "'\r\n'", ";");
-			PREPARE extrct FROM @sql_stmt;
-			EXECUTE extrct;
-			DEALLOCATE PREPARE extrct; 	
-	END; //
-DELIMITER ;
-
-/**
-	Escribe en un CSV los nuevos clientes agregados para es 
-    enviados a la Bodega
-*/
-DELIMITER //
-	CREATE PROCEDURE agregarCliente()
-    BEGIN
-		SELECT *
-        FROM Cliente C, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
-        WHERE (C.IdPersona = PE.IdPersona AND 
-		  		PE.IdUbicacion = U.IdUbicacion AND 
-		 		U.IdDistrito = D.IdDistrito AND
-		 		D.IdCanton = CA.IdCanton AND
-		 		CA.IdProvincia = PR.IdProvincia AND
-		 		PR.IdPais = P.IdPais)
-		INTO 
-			OUTFILE "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\Cliente.csv"
-			FIELDS TERMINATED BY ';'
-			OPTIONALLY ENCLOSED BY '\"'
-			LINES TERMINATED BY '\r\n';
-    END; //
-DELIMITER ;
-
-/**
-	Inserta el empleado del mes en la tabla,
-    se ejecuta cada  final de mes
-*/
-DELIMITER //
-	CREATE PROCEDURE setEmpleadoMes()
-    BEGIN
-        DECLARE idEmpleado INT;
-		SELECT getMejorEmpleado(FIRST_DAY(NOW()), LAST_DAY(NOW())) INTO idEmpleado;
-        INSERT INTO EmpleadoMes(Mes, IdEmpleado)
-        VALUES (FIRST_DAY(NOW()), idEmpleado);
-    END;//
-DELIMITER ;
-
 /**
 	Consulta el empleado del mes indicando un mes especifico
 */
@@ -127,4 +84,41 @@ DELIMITER //
         WHERE E.IdEmpleado = P.IdEmpleado AND
 			  E.IdEmpleadoMes = EM.IdEmpleado;
     END;//
+DELIMITER ;
+
+
+-- -------------------------------------------------------------------------------
+-- Procedimientos de actualizacion de la sucursal con la bodega					--
+-- -------------------------------------------------------------------------------
+-- Cierre Caja
+/**
+	Obtine todas las facturas y articulos vendidos en un dia 
+    para realizar el cierre de caja al final del dia
+*/
+DELIMITER //
+	CREATE PROCEDURE CierreCaja()
+    BEGIN
+		SELECT F.*, AF.* 
+        FROM Factura F, articuloxfactura AF 
+        WHERE DATE(F.FechaCompra) = DATE(NOW()) AND F.IdFactura = AF.IdFactura;
+	END; //
+DELIMITER ;
+
+/**
+	Consulta los clientes que necesitan que los agregen o que  los actualicen 
+    y los envia a la Bodega
+*/
+DELIMITER //
+	CREATE PROCEDURE agregarCliente()
+    BEGIN
+		SELECT *
+        FROM Cliente C, Persona PE, Ubicacion U, Distrito D, Canton CA, Provincia PR, Pais P
+        WHERE C.IdPersona = PE.IdPersona AND 
+		  		PE.IdUbicacion = U.IdUbicacion AND 
+		 		U.IdDistrito = D.IdDistrito AND
+		 		D.IdCanton = CA.IdCanton AND
+		 		CA.IdProvincia = PR.IdProvincia AND
+		 		PR.IdPais = P.IdPais AND 
+                C.Actualizar = 1;
+    END; //
 DELIMITER ;

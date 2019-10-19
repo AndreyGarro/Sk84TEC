@@ -58,7 +58,6 @@ CREATE TABLE IF NOT EXISTS Producto
 	Precio INT4 NOT NULL,
 	Estado VARCHAR(30),
 	FechaRegistro TIMESTAMP,
-	TiempoGarantia INT4,
 	IdCategoria INT4,
 	IdTipo INT4,
 	IdMarca INT4,
@@ -73,6 +72,7 @@ CREATE TABLE IF NOT EXISTS Producto
 		REFERENCES Genero(IdGenero),
 	PRIMARY KEY(IdProducto)
 );
+
 
 CREATE TABLE IF NOT EXISTS Pais
 (
@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS Cliente
 	IdCliente SERIAL NOT NULL,
 	PuntosAcumulados INT4 NULL,
 	FechaRegistro DATE NOT NULL,
+	Actualizar INT NOT NULL,
 	IdPersona INT4,
 	FOREIGN KEY (IdPersona) 
 		REFERENCES Persona(IdPersona),
@@ -191,9 +192,10 @@ CREATE TABLE IF NOT EXISTS Articulo
 	IdArticulo SERIAL NOT NULL,
 	FechaIngreso DATE NOT NULL,
 	Codigo VARCHAR(30) NOT NULL,
-	FechaGarantia DATE NOT NULL,
-	TiempoGarantia INT4,
+	FechaGarantia DATE NULL,
+	TiempoGarantia INT4 NOT NULL,
 	Estado VARCHAR(50) NOT NULL,
+	Actualizar INT NOT NULL,
  	Precio INT4 NULL,
 	IdSucursal INT4 NULL,
 	IdProducto INT4 NOT NULL,
@@ -277,6 +279,7 @@ CREATE TABLE IF NOT EXISTS EmpleadoSucursal
 	IdEmpleadoSucursal SERIAL NOT NULL,
 	IdSucursal INT4 NOT NULL,
 	IdEmpleado INT4 NOT NULL,
+	Actualizar INT NOT NULL,
 	FOREIGN KEY(IdSucursal)
 		REFERENCES Sucursal(IdSucursal),
 	FOREIGN KEY(IdEmpleado)

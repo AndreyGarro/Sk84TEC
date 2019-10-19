@@ -41,10 +41,11 @@ CREATE TRIGGER estadoProducto AFTER INSERT
 CREATE OR REPLACE FUNCTION asignarArticulo() RETURNS TRIGGER AS $AsignarArticulo$
   DECLARE
   BEGIN
-	UPDATE Articulo A
-	SET A.IdSucursal = E.IdSucursal
+	UPDATE Articulo
+	SET IdSucursal = E.IdSucursal, Estado = 'Inventario'
 	FROM Envio E
-	WHERE E.IdEnvio = NEW.IdEnvio AND A.IdArticulo = NEW.IdArticulo;
+	WHERE E.IdEnvio = NEW.IdEnvio AND IdArticulo = NEW.IdArticulo;
+	RETURN NEW;
   END;
 $AsignarArticulo$ LANGUAGE plpgsql;
 

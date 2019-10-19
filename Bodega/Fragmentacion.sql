@@ -6,23 +6,20 @@
 	nuevos articulos a la sucursal
 */
 CREATE OR REPLACE FUNCTION agregarArticulo(IdEnvioIn INT4)
-RETURNS TABLE (IdArticulo INT4, FechaIngreso, Codigo, TiempoGarantia, Estado, Precio, IdSucursal, IdProducto,
-			  IdProducto INT4, Nombre VARCHAR(100), Descripcion VARCHAR(255), Precio (INT4), Estado VARCHAR(30), FechaRegistro TIMESTAMP, TiempoGarantia INT4, IdCategria INT4, IdTipo INT4, IdMarca INT4, IdGenero INT4,
+RETURNS TABLE (IdArticulo INT4, FechaIngreso DATE, Codigo VARCHAR(30), TiempoGarantia INT4, Estado VARCHAR(50), Precio1 INT4, IdSucursal INT4, IdProducto INT4,
+			  IdProducto1 INT4, Nombre2 VARCHAR(100), Descripcion VARCHAR(255), Precio INT4, Estado1 VARCHAR(30), FechaRegistro TIMESTAMP, IdCategria INT4, IdTipo INT4, IdMarca INT4, IdGenero INT4,
 			  IdTipo1 INT4, Tipo VARCHAR(50), IdMarca1 INT4, Nombre VARCHAR(50), IdGenero1 INT4, Genero VARCHAR(30), IdCategoria1 INT4, Categoria VARCHAR(50)) AS 
 $$
 BEGIN 
 	RETURN QUERY
 		SELECT ASU.IdArticulo, ASU.FechaIngreso, ASU.Codigo, ASU.TiempoGarantia, ASU.Estado, ASU.Precio, ASU.IdSucursal, ASU.IdProducto,
-			  P.IdProducto, P.Nombre, P.Descripcion, P.Precio, P.Estado, P.FechaRegistro, P.TiempoGarantia, P.IdCategria, P.IdTipo, P.IdMarca, P.IdGenero,
+			  P.IdProducto, P.Nombre, P.Descripcion, P.Precio, P.Estado, P.FechaRegistro, P.IdCategoria, P.IdTipo, P.IdMarca, P.IdGenero,
 			  T.IdTipo, T.Tipo, M.IdMarca, M.Nombre, G.IdGenero, G.Genero, C.IdCategoria, C.Categoria
 		  FROM 
-		  (SELECT A.IdArticulo, A.Codigo, A.TiempoGarantia, A.IdProducto
-		   FROM Articulo A 
-		   INNER JOIN ArticuloEnvio AE ON A.IdArticulo = AE.IdArticulo 
-		   WHERE AE.IdEnvio = IdEnvio) AS ASU, Producto P, Tipo T, Marca M, Genero G, (SELECT C.IdCategoria, C.Categoria FROM Categoria C
-																					   INNER JOIN CategoriaXProducto CP 
-																					   ON C.IdCategoria = CP.IdCategoria) AS CA	   
-		   WHERE ASU.IdProducto = P.IdProducto AND
+		  (SELECT A.IdArticulo, A.FechaIngreso, A.Codigo, A.TiempoGarantia, A.Estado, A.Precio, A.IdSucursal, A.IdProducto
+		   FROM Articulo A INNER JOIN ArticuloEnvio AE ON A.IdArticulo = AE.IdArticulo 
+		   WHERE AE.IdEnvio = IdEnvio) AS ASU, Producto P, Tipo T, Marca M, Genero G, Categoria C	   
+		   WHERE C.IdCategoria = P.IdCategoria AND
 		  		 P.IdTipo = T.IdTipo AND
 		  		 P.IdMarca = M.IdMarca AND
 		  		 P.IDGenero = G.IdGenero; 
@@ -62,7 +59,8 @@ BEGIN
 					U.IdDistrito = D.IdDistrito AND
 					D.IdCanton = CA.IdCanton AND
 					CA.IdProvincia = PR.IdProvincia AND
-					PR.IdPais = P.IdPais;
+					PR.IdPais = P.IdPais AND
+					C.Actualizar = 1;
 END;
 $$ 
 LANGUAGE plpgsql;

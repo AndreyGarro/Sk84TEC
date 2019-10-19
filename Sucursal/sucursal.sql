@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS Articulo (
     FechaGarantia DATE,
 	TiempoGarantia INT NOT NULL,
     Precio INT NOT NULL,
+	Actualizar INT NOT NULL,
     IdProducto INT NOT NULL,
     PRIMARY KEY (IdArticulo),
     FOREIGN KEY (IdProducto)
@@ -147,6 +148,7 @@ CREATE TABLE IF NOT EXISTS Cliente (
     IdClienteBodega INT,
     PuntosAcumulados INT NOT NULL,
     FechaRegistro DATE NOT NULL,
+	Actualizar INT NOT NULL,
     IdPersona INT NOT NULL,
     PRIMARY KEY (IdCliente),
     FOREIGN KEY (IdPersona)
@@ -165,6 +167,7 @@ CREATE TABLE IF NOT EXISTS Empleado (
     Estado VARCHAR(10) NOT NULL,
     FechaIngreso DATE NOT NULL,
     Salario INT NOT NULL,
+	Actualizar INT NOT NULL,
     IdPuesto INT NOT NULL,
     IdPersona INT NOT NULL,
     IdHorario INT NOT NULL,
