@@ -16,7 +16,7 @@ DELIMITER //
 	END; //
 DELIMITER ;
 
-CALL puntosClientesCSV();
+-- CALL puntosClientesCSV();
 
 /**
  Reporte sobre cantidad de productos actuales en el inventario de la tienda, de
@@ -60,4 +60,4 @@ DELIMITER //
 	END; //
 DELIMITER ;
 
--- CALL comprasCSV();
+ -- CALL comprasCSV();

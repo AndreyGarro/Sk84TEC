@@ -472,9 +472,9 @@ public class PostgreSqlExample {
 		List<String> estados = new ArrayList<String>();
 		estados.add("Activo");
 		estados.add("Inactivo");
-		insertData("Empleado", "Estado, FechaIngreso, Salario, Actualizar, IdPersona, IdHorario, IdPuesto",
+		insertData("Empleado", "Estado, FechaIngreso, Salario, IdPersona, IdHorario, IdPuesto",
 				"('" + estados.get(rand.nextInt(estados.size())) + "', '" + fechas.get(rand.nextInt(fechas.size() - 1))
-						+ "', " + (rand.nextInt(750) + 400) + ", 1, " + idPersona + ", " + agregaHorarios(c) + ", "
+						+ "', " + (rand.nextInt(750) + 400) + ", " + idPersona + ", " + agregaHorarios(c) + ", "
 						+ agregaPuesto(c) + ");",
 				c);
 
@@ -530,20 +530,20 @@ public class PostgreSqlExample {
 		Integer idHorario = 0;
 
 		// Agrega Sucursales
-//		for (int i = 0; i < 8; i++) {
-//			idUbicacion = agregaUbicacion(c);
-//			idHorario = agregaHorarios(c);
-//			List<String> provincia = consultString(c,
-//					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
-//							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
-//							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
-//							+ idUbicacion,
-//					"Nombre");
-//
-//			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
-//					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
-//					c);
-//		}
+		for (int i = 0; i < 8; i++) {
+			idUbicacion = agregaUbicacion(c);
+			idHorario = agregaHorarios(c);
+			List<String> provincia = consultString(c,
+					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
+							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
+							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
+							+ idUbicacion,
+					"Nombre");
+
+			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
+					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
+					c);
+		}
 
 
 		// Agrega persona
@@ -551,21 +551,18 @@ public class PostgreSqlExample {
 		List<String> correos = readList("..\\data\\email.txt");
 		List<String> telefonos = readList("..\\data\\telefonos.txt");
 //		
-		for (int i = 0; i <= 1000; i++) {
+		for (int i = 0; i <= 10; i++) {
 			agregaCliente(c, agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0)));
-//			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
-//			cedulas.remove(i);
+			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
+			cedulas.remove(i);
 		}
-//		
-//		// Agrega Clientes
-
 
 		// Agrega Articulo
-//		agregaArticulo(c, agregaProducto(c, complementoProducto(c, "hombre")), rand.nextInt(150) + 25, 50);
+		agregaArticulo(c, agregaProducto(c, complementoProducto(c, "hombre")), rand.nextInt(150) + 25, 50);
 		
 		// Crea Envios
-//		insertData("Envio", "Fecha, CodigoEnvio, IdSucursal", "('2019-10-19 20:00:00', '30A', 1)", c);
-//		insertData("ArticuloEnvio", "IdEnvio, IdArticulo", "(1, 3);", c);
+		insertData("Envio", "Fecha, CodigoEnvio, IdSucursal", "('2019-10-19 20:00:00', '30A', 1)", c);
+		insertData("ArticuloEnvio", "IdEnvio, IdArticulo", "(1, 3);", c);
 		
 		// relacionarEmpleadoSucursal(c);
 		System.out.println("Finalizado");

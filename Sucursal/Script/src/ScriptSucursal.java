@@ -84,14 +84,16 @@ public class ScriptSucursal {
 		}
 	}
 
-	public static void insertIgnore(String tabla, String atributos, String datos, Connection c) {
+	public static void insertIgnore(String tabla, String atributos, String datos, Connection c, String IdTabla, String ValorID) {
 		try {
 			Statement state = c.createStatement();
-			state.executeUpdate("INSERT INTO " + tabla + " (" + atributos + ")" + " VALUES " + datos);
+			state.executeUpdate("INSERT INTO " + tabla + " (" + atributos + ")" + " SELECT " + datos + "WHERE NOT EXISTS "
+					+ "(SELECT "+ IdTabla+ " FROM " + tabla +" WHERE " + IdTabla +" = "+ ValorID +");");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	public static List<List<String>> consultarCliente(Connection con, String consult) {
 		List<List<String>> clientes = new ArrayList<List<String>>();
 		List<String> cliente = new ArrayList<String>();
@@ -121,6 +123,7 @@ public class ScriptSucursal {
 		for(int i =0; i < 1000; i++) {
 			List<String> cliente = clientes.get(i);
 			if(consultString(mySQL,"SELECT IdCliente FROM Cliente C WHERE C.IdCliente = "+ cliente.get(0) +";" , "IdCliente").size() == 0) {
+				insertIgnore("Pais","IdPais, Nombre" , cliente.get(26)+","+cliente.get(27), mySQL, "IdPais", cliente.get(26));
 				
 			}else {
 				updateData("Cliente", "PuntosAcomulados", cliente.get(1), mySQL, "IdCliente", cliente.get(0));
