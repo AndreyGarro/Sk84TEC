@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -32,7 +31,7 @@ public class PostgreSqlExample {
 			} catch (ClassNotFoundException ex) {
 				System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
 			}
-			connection = DriverManager.getConnection("jdbc:postgresql://192.168.43.58:5432/" + DBName, "postgres",
+			connection = DriverManager.getConnection("jdbc:postgresql://172.26.42.130:5432/" + DBName, "postgres",
 					password);
 
 			boolean valid = connection.isValid(50000);
@@ -58,8 +57,6 @@ public class PostgreSqlExample {
 	public static void insertData(String tabla, String atributos, String datos, Connection c) {
 		try {
 			Statement state = c.createStatement();
-			// System.out.println("INSERT INTO " + tabla + " ("+ atributos + ")"+ " VALUES "
-			// + datos);
 			state.executeUpdate("INSERT INTO " + tabla + " (" + atributos + ")" + " VALUES " + datos);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -319,7 +316,6 @@ public class PostgreSqlExample {
 
 			tipo = tipos_mujer.get(rand.nextInt(tipos_mujer.size() - 1));
 			marca = marcaMujer.get(rand.nextInt(marcaMujer.size() - 1));
-
 			switch (tipo) {
 			case "Abrigos":
 				listaCat = readList("..\\data\\categoria_abrigos_M.txt");
@@ -407,22 +403,18 @@ public class PostgreSqlExample {
 		List<String> fechas = readList("..\\data\\fechas.txt");
 		String fecha = fechas.get(rand.nextInt(fechas.size() - 1));
 
-		int tiempoGarantia = rand.nextInt(5) + 1;
-
 		if (listaComplemento.size() == 4) {
 			insertData("Producto",
-					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdCategoria, IdTipo, IdMarca, IdGenero",
+					"Nombre, Descripcion, Precio, Estado, FechaRegistro, IdCategoria, IdTipo, IdMarca, IdGenero",
 					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '"
-							+ fecha + "', " + tiempoGarantia + ", " + listaComplemento.get(0) + ", "
-							+ listaComplemento.get(1) + ", " + listaComplemento.get(2) + ", " + listaComplemento.get(3)
-							+ ");",
+							+ fecha + "', " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
+							+ listaComplemento.get(2) + ", " + listaComplemento.get(3) + ");",
 					c);
 		} else {
-			insertData("Producto",
-					"Nombre, Descripcion, Precio, Estado, FechaRegistro, TiempoGarantia, IdTipo, IdMarca, IdGenero",
+			insertData("Producto", "Nombre, Descripcion, Precio, Estado, FechaRegistro, IdTipo, IdMarca, IdGenero",
 					"('" + nombre.get(0) + "', '" + descripcion.get(0) + "', " + precio + ", '" + estado + "', '"
-							+ fecha + "', " + tiempoGarantia + ", " + listaComplemento.get(0) + ", "
-							+ listaComplemento.get(1) + ", " + listaComplemento.get(2) + ");",
+							+ fecha + "', " + listaComplemento.get(0) + ", " + listaComplemento.get(1) + ", "
+							+ listaComplemento.get(2) + ");",
 					c);
 		}
 		return consultString(c, "SELECT idProducto FROM Producto P ORDER BY P.IdProducto DESC LIMIT 1;", "idProducto")
@@ -454,7 +446,8 @@ public class PostgreSqlExample {
 		puestos.add("Vendedor");
 		puestos.add("Cajero");
 		puestos.add("Asistente");
-		puestos.add("Chofer");	
+		puestos.add("Chofer");
+		puestos.add("Gerente");
 		puestos.add("Guarda");
 
 		String puesto = puestos.get(rand.nextInt(puestos.size() - 1));
@@ -479,9 +472,9 @@ public class PostgreSqlExample {
 		List<String> estados = new ArrayList<String>();
 		estados.add("Activo");
 		estados.add("Inactivo");
-		insertData("Empleado", "Estado, FechaIngreso, Salario, IdPersona, IdHorario, IdPuesto",
+		insertData("Empleado", "Estado, FechaIngreso, Salario, Actualizar, IdPersona, IdHorario, IdPuesto",
 				"('" + estados.get(rand.nextInt(estados.size())) + "', '" + fechas.get(rand.nextInt(fechas.size() - 1))
-						+ "', " + (rand.nextInt(750) + 400) + ", " + idPersona + ", " + agregaHorarios(c) + ", "
+						+ "', " + (rand.nextInt(750) + 400) + ", 1, " + idPersona + ", " + agregaHorarios(c) + ", "
 						+ agregaPuesto(c) + ");",
 				c);
 
@@ -503,6 +496,27 @@ public class PostgreSqlExample {
 		}
 	}
 
+	public static void agregaCliente(Connection con, String idPersona) {
+		Random rand = new Random();
+		List<String> fechas = readList("..\\data\\fechas.txt");
+		insertData("Cliente", "PuntosAcumulados, FechaRegistro, Actualizar, IdPersona", "(" + rand.nextInt(150) + ", '"
+				+ fechas.get(rand.nextInt(fechas.size() - 1)) + "', 1," + idPersona + ");", con);
+	}
+
+	public static void agregaArticulo(Connection con, String idProducto, int precio, int cantidad) {
+		Random rand = new Random();
+		List<String> fechas = readList("..\\data\\fechas.txt");
+		List<String> codigos = generateCode("", cantidad);
+		int tiempo = rand.nextInt(36);
+
+		for (int i = 0; i < cantidad; i++) {
+			insertData("Articulo", "FechaIngreso, Codigo, TiempoGarantia, Estado, Precio, Actualizar, IdProducto",
+					"('" + fechas.get(rand.nextInt(fechas.size() - 1)) + "', '" + codigos.get(i) + "', "
+							+ tiempo + ", 'Bodega', " + precio + ", 1, " + idProducto +");",
+					con);
+		}
+	}
+
 	/**
 	 * Main
 	 * 
@@ -516,37 +530,44 @@ public class PostgreSqlExample {
 		Integer idHorario = 0;
 
 		// Agrega Sucursales
-		for (int i = 0; i < 8; i++) {	
-			idUbicacion = agregaUbicacion(c);
-			idHorario = agregaHorarios(c);
-			List<String> provincia = consultString(c,
-					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
-							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
-							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
-							+ idUbicacion,
-					"Nombre");
+//		for (int i = 0; i < 8; i++) {
+//			idUbicacion = agregaUbicacion(c);
+//			idHorario = agregaHorarios(c);
+//			List<String> provincia = consultString(c,
+//					"SELECT P.Nombre FROM Ubicacion U INNER JOIN Distrito D ON U.idDistrito = D.idDistrito "
+//							+ "INNER JOIN Canton C ON D.idCanton = C.idCanton "
+//							+ "INNER JOIN Provincia P ON P.idProvincia = C.idProvincia " + "WHERE U.IdUbicacion = "
+//							+ idUbicacion,
+//					"Nombre");
+//
+//			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
+//					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
+//					c);
+//		}
 
-			insertData("Sucursal", "Nombre, Descripcion, Estado, IdUbicacion, IdHorario", "('Sk8-4 TEC "
-					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
-					c);
-		}
-		// Agregaar productos
-		for (int i = 0; i < 2000; i++) {
-			agregaProducto(c, complementoProducto(c, "hombre"));
-		}
-		for (int i = 0; i < 2000; i++) {
-			agregaProducto(c, complementoProducto(c, "mujer"));
-		}
 
 		// Agrega persona
 		List<String> cedulas = readList("..\\data\\cedulas.txt");
 		List<String> correos = readList("..\\data\\email.txt");
 		List<String> telefonos = readList("..\\data\\telefonos.txt");
-		
-		
-		for(int i = 0; i <= 4000; i++) {
-			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
+//		
+		for (int i = 0; i <= 1000; i++) {
+			agregaCliente(c, agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0)));
+//			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
+//			cedulas.remove(i);
 		}
-		relacionarEmpleadoSucursal(c);
+//		
+//		// Agrega Clientes
+
+
+		// Agrega Articulo
+//		agregaArticulo(c, agregaProducto(c, complementoProducto(c, "hombre")), rand.nextInt(150) + 25, 50);
+		
+		// Crea Envios
+//		insertData("Envio", "Fecha, CodigoEnvio, IdSucursal", "('2019-10-19 20:00:00', '30A', 1)", c);
+//		insertData("ArticuloEnvio", "IdEnvio, IdArticulo", "(1, 3);", c);
+		
+		// relacionarEmpleadoSucursal(c);
+		System.out.println("Finalizado");
 	}
 }

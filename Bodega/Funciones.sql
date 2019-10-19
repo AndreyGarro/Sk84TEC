@@ -52,5 +52,40 @@ $$ LANGUAGE plpgsql;
 -- DROP FUNCTION IF EXISTS garantiaArticulo;
 -- DROP FUNCTION IF EXISTS getEmpleadoMes;
 -- DROP FUNCTION IF EXISTS promociones;
-	
 
+-------------------------------------------
+-- Agregar un cliente desde las sucursales
+-------------------------------------------
+
+
+/**
+	Agregar una Ubicacion completa
+*/
+CREATE OR REPLACE PROCEDURE insertarUbicacion(NombrePueblo VARCHAR(50), DetalleUbicacion VARCHAR(255), NombreDistrito VARCHAR(50),	
+										   NombreCanton VARCHAR(50), NombreProvincia VARCHAR(50), NombrePais VARCHAR(50))
+LANGUAGE SQL 
+AS $$
+	INSERT INTO Pais (Nombre) SELECT NombrePais
+	WHERE NOT EXISTS (SELECT IdPais FROM Pais WHERE Nombre = NombrePais);
+	
+	INSERT INTO Provincia (Nombre, IdPais) SELECT NombreProvincia, (SELECT IdPais FROM Pais WHERE Nombre = NombrePais LIMIT 1)
+	WHERE NOT EXISTS (SELECT IdProvincia FROM Provincia WHERE Nombre = NombreProvincia);
+
+	INSERT INTO Canton (Nombre, IdProvincia) SELECT NombreCanton, (SELECT IdProvincia FROM Provincia WHERE Nombre = NombreProvincia LIMIT 1)
+	WHERE NOT EXISTS (SELECT IdCanton FROM Canton WHERE Nombre = NombreCanton);
+	
+	INSERT INTO Distrito (Nombre, IdCanton) SELECT NombreDistrito, (SELECT IdCanton FROM Canton WHERE Nombre = NombreCanton LIMIT 1)
+	WHERE NOT EXISTS (SELECT IdDistrito FROM Distrito WHERE Nombre = NombreDistrito);
+	
+	INSERT INTO Ubicacion (NombrePueblo, DetalleUbicacion, IdDistrito) SELECT NombrePueblo, DetalleUbicacion, (SELECT IdDistrito 
+																											  FROM Distrito WHERE Nombre = NombreDistrito)
+	WHERE NOT EXISTS (SELECT IdUbicacion FROM Ubicacion U WHERE U.NombrePueblo = NombrePueblo AND U.DetalleUbicacion =  DetalleUbicacion);
+$$;
+
+CALL insertarUbicacion('Tasdfgh','fnwieofnbewgbw svnisbws','Alvarado','El Guarco','Cartago','Costa Rica');
+
+SELECT * FROM Pais;
+SELECT * FROM Provincia;
+SELECT * FROM Canton;
+SELECT * FROM Distrito;
+SELECT * FROM Ubicacion;
