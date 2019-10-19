@@ -32,7 +32,7 @@ public class PostgreSqlExample {
 			} catch (ClassNotFoundException ex) {
 				System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
 			}
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DBName, "postgres",
+			connection = DriverManager.getConnection("jdbc:postgresql://192.168.43.58:5432/" + DBName, "postgres",
 					password);
 
 			boolean valid = connection.isValid(50000);
@@ -296,7 +296,6 @@ public class PostgreSqlExample {
 		if (genero == "hombre") {
 			tipo = tipos_hombre.get(rand.nextInt(tipos_hombre.size() - 1));
 			marca = marcaHombre.get(rand.nextInt(marcaHombre.size() - 1));
-			System.out.println(tipo);
 			switch (tipo) {
 			case "Abrigos":
 				listaCat = readList("..\\data\\categoria_abrigos_H.txt");
@@ -320,7 +319,6 @@ public class PostgreSqlExample {
 
 			tipo = tipos_mujer.get(rand.nextInt(tipos_mujer.size() - 1));
 			marca = marcaMujer.get(rand.nextInt(marcaMujer.size() - 1));
-			System.out.println(tipo);
 
 			switch (tipo) {
 			case "Abrigos":
@@ -456,8 +454,7 @@ public class PostgreSqlExample {
 		puestos.add("Vendedor");
 		puestos.add("Cajero");
 		puestos.add("Asistente");
-		puestos.add("Chofer");
-		puestos.add("Gerente");
+		puestos.add("Chofer");	
 		puestos.add("Guarda");
 
 		String puesto = puestos.get(rand.nextInt(puestos.size() - 1));
@@ -513,7 +510,7 @@ public class PostgreSqlExample {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Connection c = connectDatabase("prueba", "123456789");
+		Connection c = connectDatabase("ProyectoUno", "12345678");
 		Random rand = new Random();
 		Integer idUbicacion = 0;
 		Integer idHorario = 0;
@@ -533,20 +530,23 @@ public class PostgreSqlExample {
 					+ provincia.get(0) + "', 'Venta de artículos', 'Activa', " + idUbicacion + ", " + idHorario + ");",
 					c);
 		}
-
-//		agregaProducto(c, complementoProducto(c, "hombre"));
+		// Agregaar productos
+		for (int i = 0; i < 2000; i++) {
+			agregaProducto(c, complementoProducto(c, "hombre"));
+		}
+		for (int i = 0; i < 2000; i++) {
+			agregaProducto(c, complementoProducto(c, "mujer"));
+		}
 
 		// Agrega persona
 		List<String> cedulas = readList("..\\data\\cedulas.txt");
 		List<String> correos = readList("..\\data\\email.txt");
 		List<String> telefonos = readList("..\\data\\telefonos.txt");
 		
-		agregaPersona(c, cedulas.get(0), correos.get(0), telefonos.get(0));
 		
 		for(int i = 0; i <= 4000; i++) {
 			agregaEmpleado(c, agregaPersona(c, cedulas.get(i), correos.get(i), telefonos.get(i)));
 		}
-		
 		relacionarEmpleadoSucursal(c);
 	}
 }
