@@ -26,9 +26,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM agregarArticulo(4);
-
-SELECT * FROM Producto;
+-- SELECT * FROM agregarArticulo(4);
 
 -- Agregar Clientes a las sucursales 
 /**
@@ -65,8 +63,8 @@ END;
 $$ 
 LANGUAGE plpgsql;
 
-SELECT * FROM agregarCliente();
-DROP FUNCTION agregarCliente;
+-- SELECT * FROM agregarCliente();
+-- DROP FUNCTION agregarCliente;
 
 -- Agregar Empleado a la sucursal 
 /**
@@ -74,7 +72,7 @@ DROP FUNCTION agregarCliente;
 	la sucursal en un dia.
 */
 CREATE OR REPLACE FUNCTION agregarEmpleado(IdSucursalIN INT4)
-RETURNS TABLE (IdEmpleado INT4, Estado VARCHAR(20), FechaIngreso DATE, Salario INT2, IdPersona INT4, IdHorario INT4,  IdPuesto INT4,
+RETURNS TABLE (IdEmpleado INT4, Estado VARCHAR(20), FechaIngreso DATE, Salario INT4, IdPersona INT4, IdHorario INT4,  IdPuesto INT4,
 				IdPuesto1 INT4, Puesto VARCHAR(100), SalarioBase INT4,
 				IdHorario1 INT4, Lunes BOOL, Martes BOOL, Miercoles BOOL, Jueves BOOL, Viernes BOOL, Sabado BOOL, Domingo BOOL, Apertura TIME, Cierre TIME,
 				IdPersona1 INT4, Cedula VARCHAR(50), Nombre VARCHAR(50), Apellido1 VARCHAR(50), Apellido2 VARCHAR(50), Email VARCHAR(50), Telefono VARCHAR(50), IdUbicacion INT4,
@@ -112,9 +110,6 @@ END;
 $$ 
 LANGUAGE plpgsql;
 
-SELECT * FROM agregarEmpleado(2);
-
-DROP FUNCTION agregarEmpleado;
+-- SELECT * FROM agregarEmpleado(2);
 
 
-SELECT Count(*) FROM Empleado;

@@ -82,7 +82,7 @@ AS $$
 	WHERE NOT EXISTS (SELECT IdUbicacion FROM Ubicacion U WHERE U.NombrePueblo = NombrePueblo AND U.DetalleUbicacion =  DetalleUbicacion);
 $$;
 
-CALL insertarUbicacion('Tasdfgh','fnwieofnbewgbw svnisbws','Alvarado','El Guarco','Cartago','Costa Rica');
+
 
 SELECT * FROM Pais;
 SELECT * FROM Provincia;
